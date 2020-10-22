@@ -8,6 +8,7 @@ let selectFiles;
 let min;
 let max;
 let identification;
+let files;
 export default new Vuex.Store({
   state: {
     request:{
@@ -17,6 +18,7 @@ export default new Vuex.Store({
       identification,
     },
     response,
+    files,
   },
   mutations: {
     getData(state,response){

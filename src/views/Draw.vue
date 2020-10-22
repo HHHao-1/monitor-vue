@@ -1,17 +1,18 @@
 <template>
-  <h1>
-    Draw
-    <button @click="getList">test</button>
-  </h1>
+  <analyse>
+  <div id="analyse-draw" >
+  </div>
+  </analyse>
 </template>
 <script>
-// import * as d3 from "d3";
-//
-// window.d3 = d3;
 const d3 = require("d3")
+import Analyse from "@/views/Analyse";
 
 
 export default {
+  components: {
+    Analyse
+  },
   data() {
     let svg;
     let circle;
@@ -32,8 +33,13 @@ export default {
       svg,
     }
   },
+  mounted() {
+    this.getList()
+  },
   methods: {
     getList() {
+      this.$store.commit('getData', JSON.parse(sessionStorage.getItem("response")))
+
       this.nodelist = this.$store.state.response.data.nodeList;
       this.linklist = this.$store.state.response.data.linkList;
 
@@ -59,7 +65,9 @@ export default {
     },
     drawAtlas() {
 
-      var bit = 2;
+      const that = this;
+
+      var bit = this.$children[0].addressBits;
       var width = 0;
       var height = 0;
 
@@ -72,7 +80,6 @@ export default {
           .linkDistance(180)//连接线长度
           .charge(-1500)//顶点的电荷数。该参数决定是排斥还是吸引，数值越小越互相排斥
           .on("tick", () => {
-            // var circle = that.circle;
             circle.attr("transform", (d) => {
               return "translate(" + d.x + "," + d.y + ")";
             });//圆圈
@@ -131,7 +138,7 @@ export default {
           .start();//开始转换
 
       var svg = this.svg;
-      svg = d3.select("#app")
+      svg = d3.select("#analyse-draw")
           .append("svg")
           .attr('id', 'svg')
           .attr("width", width)
@@ -246,13 +253,23 @@ export default {
           })//设置圆圈半径
           .on("click", function (node) {
             //单击时让连接线加粗
-            this.edges_line.style("stroke-width", function (line) {
+            edges_line.style("stroke-width", function (line) {
               if (line.source.name == node.name || line.target.name == node.name) {
                 return 4;
               } else {
                 return 0.5;
               }
             });
+             that.$children[0].isShowCounts = !that.$children[0].isShowCounts;
+             that.$children[0].inCount = node.inCount;
+             that.$children[0].outCount = node.outCount;
+             that.$children[0].inValue = node.inValue;
+             that.$children[0].outValue = node.outValue;
+             that.$children[0].value = node.value;
+            // document.getElementById("outCount").innerText = "输出次数：" + node.outCount;
+            // document.getElementById("inValue").innerText = "输入额度：" + node.inValue;
+            // document.getElementById("outValue").innerText = "输出额度：" + node.outValue;
+            // document.getElementById("value").innerText = "余额：" + node.value;
           })
           .call(force.drag);//将当前选中的元素传到drag函数中，使顶点可以被拖动
 
@@ -330,6 +347,10 @@ export default {
 }
 </script>
 <style>
+svg {
+
+}
+
 .link {
   fill: none;
   stroke: #666;

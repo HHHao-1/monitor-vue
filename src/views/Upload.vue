@@ -33,8 +33,8 @@ export default {
   },
   methods: {
     handleUploadSuccess(response) {
-      console.log(response)
-      this.$store.commit('getData', response)
+      sessionStorage.setItem("response", JSON.stringify(response))
+      this.$store.commit('getData', JSON.parse(sessionStorage.getItem("response")))
       this.$router.push('/draw')
     }
     ,
