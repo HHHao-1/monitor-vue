@@ -60,7 +60,6 @@ export default {
       for (var key in iMap) {
         this.identMap.set(key, iMap[key])
       }
-      // const this = this;
       this.drawAtlas(this);
     },
     drawAtlas() {
@@ -266,10 +265,6 @@ export default {
             that.$children[0].inValue = node.inValue;
             that.$children[0].outValue = node.outValue;
             that.$children[0].value = node.value;
-            // document.getElementById("outCount").innerText = "输出次数：" + node.outCount;
-            // document.getElementById("inValue").innerText = "输入额度：" + node.inValue;
-            // document.getElementById("outValue").innerText = "输出额度：" + node.outValue;
-            // document.getElementById("value").innerText = "余额：" + node.value;
           })
           .call(force.drag);//将当前选中的元素传到drag函数中，使顶点可以被拖动
 

@@ -25,28 +25,30 @@
         <el-button @click="open" type="primary" plain>导入</el-button>
         <input ref="filElem" type="file" class="upload-file" @change="getFile" multiple="multiple" accept=".csv"
                style="display: none">
-        <el-button type="primary" plain class="shield" @click="select1">屏蔽</el-button>
-        <el-button type="primary" plain @click="select2">标注</el-button>
-        <el-button type="primary" plain @click="select3">设定</el-button>
+        <el-button type="primary" plain class="shield" @click="select(1)">屏蔽</el-button>
+        <el-button type="primary" plain @click="select(2)">标注</el-button>
+        <el-button type="primary" plain @click="select(3)">设定</el-button>
 
         <div class="shield—card">
           <el-card class="box-card" v-show="isShowShield">
             <h3 class="header">屏蔽</h3>
             <el-divider class="divider"></el-divider>
             <div class="main">
-              <el-form class="form" label-width="15px" size="mini" label-position="left">
-                <el-form-item v-for="(line,index) in lines" :key="line" :label="(index+1).toString()">
-                  <el-input v-model="identificationShield[index]"></el-input>
-                  <el-button class="sub" icon="el-icon-remove-outline" circle @click="decr"></el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button class="plus" icon="el-icon-circle-plus-outline" circle @click="incr"></el-button>
-                </el-form-item>
-                <el-form-item class="btn">
-                  <el-button class="btn-c" @click="empty(1)">取消</el-button>
-                  <el-button class="btn-c" type="primary" @click="identificationConfirm">确认</el-button>
-                </el-form-item>
-              </el-form>
+              <el-scrollbar style="height: 245px;">
+                <el-form class="form" label-width="15px" size="mini" label-position="left">
+                  <el-form-item v-for="(line,index) in lines1" :key="line" :label="(index+1).toString()">
+                    <el-input v-model="identificationShield[index]"></el-input>
+                    <el-button class="sub" icon="el-icon-remove-outline" circle @click="decr(1)"></el-button>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button class="plus" icon="el-icon-circle-plus-outline" circle @click="incr(1)"></el-button>
+                  </el-form-item>
+                  <el-form-item class="btn">
+                    <el-button class="btn-c" @click="empty(1)">取消</el-button>
+                    <el-button class="btn-c" type="primary" @click="identificationConfirm">确认</el-button>
+                  </el-form-item>
+                </el-form>
+              </el-scrollbar>
             </div>
           </el-card>
         </div>
@@ -57,20 +59,22 @@
           <h3 class="header">标注</h3>
           <el-divider class="divider"></el-divider>
           <div class="main">
-            <el-form class="form" label-width="15px" size="mini" label-position="left">
-              <el-form-item v-for="(line,index) in lines" :key="line" :label="(index+1).toString()">
-                <el-input class="input1" v-model="identificationMark1[index]"></el-input>
-                <el-input class="input2" v-model="identificationMark2[index]"></el-input>
-                <el-button class="sub" icon="el-icon-remove-outline" circle @click="decr"></el-button>
-              </el-form-item>
-              <el-form-item>
-                <el-button class="plus" icon="el-icon-circle-plus-outline" circle @click="incr"></el-button>
-              </el-form-item>
-              <el-form-item class="btn">
-                <el-button class="btn-c" @click="empty(2)">取消</el-button>
-                <el-button class="btn-c" type="primary" @click="identificationConfirm">确认</el-button>
-              </el-form-item>
-            </el-form>
+            <el-scrollbar style="height: 245px;">
+              <el-form class="form" label-width="15px" size="mini" label-position="left">
+                <el-form-item v-for="(line,index) in lines2" :key="line" :label="(index+1).toString()">
+                  <el-input class="input1" v-model="identificationMark1[index]"></el-input>
+                  <el-input class="input2" v-model="identificationMark2[index]"></el-input>
+                  <el-button class="sub" icon="el-icon-remove-outline" circle @click="decr(2)"></el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button class="plus" icon="el-icon-circle-plus-outline" circle @click="incr(2)"></el-button>
+                </el-form-item>
+                <el-form-item class="btn">
+                  <el-button class="btn-c" @click="empty(2)">取消</el-button>
+                  <el-button class="btn-c" type="primary" @click="identificationConfirm">确认</el-button>
+                </el-form-item>
+              </el-form>
+            </el-scrollbar>
           </div>
         </el-card>
       </div>
@@ -110,13 +114,20 @@ import BigDecimal from "bigdecimal";
 export default {
   data() {
     return {
-      lines: 1,
 
+      //#region 行数
+      lines1: 1,
+      lines2: 1,
+      //#endregion
+
+      //#region 显示、隐藏
       isShowShield: false,
       isShowMark: false,
       isShowSet: false,
       isShowCounts: false,
+      //#endregion
 
+      //#region 上传参数
       files: FileList,
       max: '',
       min: '',
@@ -127,15 +138,20 @@ export default {
       identification: '',
       identification1: '',
       identification2: '',
+      //#endregion
 
+      //#region 地址数据
       inCount: Number,
       outCount: Number,
       inValue: BigDecimal,
       outValue: BigDecimal,
       value: BigDecimal,
+      //#endregion
     }
   },
   methods: {
+
+    //取消按键重置功能
     empty(id) {
       switch (id) {
         case 1:
@@ -157,12 +173,16 @@ export default {
           break;
       }
     },
+
+    //设定信息
     setConfirm() {
       this.$store.state.request.max = this.max;
       this.$store.state.request.min = this.min;
       this.getFile();
 
     },
+
+    //标注信息
     identificationConfirm() {
       let tem = '';
       for (let i = 0; i < this.identificationShield.length; i++) {
@@ -179,36 +199,60 @@ export default {
       this.getFile();
     },
 
-    select1() {
-      this.isShowShield = !this.isShowShield;
-      this.isShowMark = false;
-      this.isShowSet = false;
+    //button选择
+    select(id) {
+      switch(id) {
+        case 1:
+          this.isShowShield = !this.isShowShield;
+          this.isShowMark = false;
+          this.isShowSet = false;
+          break;
+        case 2:
+          this.isShowMark = !this.isShowMark;
+          this.isShowShield = false;
+          this.isShowSet = false;
+          break;
+        case 3:
+          this.isShowSet = !this.isShowSet;
+          this.isShowMark = false;
+          this.isShowShield = false;
+          break;
+      }
+
     },
-    select2() {
-      this.isShowMark = !this.isShowMark;
-      this.isShowShield = false;
-      this.isShowSet = false;
+
+    //box-card增加行
+    incr(id) {
+      switch(id) {
+        case 1:
+          this.lines1++;
+          break;
+        case 2:
+          this.lines2++;
+          break;
+      }
     },
-    select3() {
-      this.isShowSet = !this.isShowSet;
-      this.isShowMark = false;
-      this.isShowShield = false;
+
+    //box-card减少行
+    decr(id) {
+      switch(id) {
+        case 1:
+          this.lines1--;
+          break;
+        case 2:
+          this.lines2--;
+          break;
+      }
     },
-    incr() {
-      this.lines++;
-    },
-    decr() {
-      this.lines--;
-    },
+
+    //选择文件
     open() {
       this.$refs.filElem.dispatchEvent(new MouseEvent('click'))
     },
+
+    //上传文件
     getFile() {
-      // const blob = new Blob([JSON.stringify(this.$refs.filElem.files)], {type: "text/csv,charset=UTF-8"});
       this.files = this.$refs.filElem.files;
-      sessionStorage.setItem('files', JSON.stringify(this.$refs.filElem.files))
-      console.log(this.$refs.filElem.files)
-      console.log(JSON.parse(sessionStorage.getItem('files')))
 
       let param = new FormData();
       for (let i = 0; i < this.files.length; i++) {
@@ -235,6 +279,7 @@ export default {
             that.$message.error('请求失败');
           });
     },
+
   }
 }
 
@@ -246,9 +291,9 @@ export default {
   height: 100%;
 
   .col-left {
-    position:absolute;
-    left:0;
-    top:0;
+    position: absolute;
+    left: 0;
+    top: 0;
     z-index: 1;
     margin: 20px 30px;
     display: inline-block;
@@ -301,9 +346,9 @@ export default {
   }
 
   .col-right {
-    position:absolute;
-    left:0;
-    top:0;
+    position: absolute;
+    left: 0;
+    top: 0;
     z-index: 1;
     margin: 20px 10px;
     display: inline-block;
@@ -335,14 +380,9 @@ export default {
 
     .shield—card {
       .box-card {
-        //position: absolute;
-        //left: 8px;
-        //top: 50px;
         margin: 10px 0 0 5px;
         font-size: 12px;
-        //width: 278px;
         height: 280px;
-        resize: vertical;
 
         .header {
           margin: 0 auto;
@@ -358,14 +398,19 @@ export default {
         .main {
           display: inline-block;
 
+          .el-scrollbar__bar{
+            &.is-vertical{
+              width:0;//滚动条宽度
+            }
+          }
+
           .el-input {
             width: 230px;
           }
 
           .btn {
-            position: absolute;
-            right: 33px;
-
+            position: relative;
+            left: 105px;
             .btn-c {
               padding: 7px 15px;
             }
@@ -393,7 +438,7 @@ export default {
 
     .mark—card {
       position: fixed;
-      top: 62px;
+      top: 55px;
       right: 10px;
 
       .box-card {
@@ -416,6 +461,12 @@ export default {
         .main {
           display: inline-block;
 
+          .el-scrollbar__bar{
+            &.is-vertical{
+              width:0;//滚动条宽度
+            }
+          }
+
           .el-input {
             width: 220px;
           }
@@ -426,9 +477,8 @@ export default {
           }
 
           .btn {
-            position: absolute;
-            right: 33px;
-
+            position: relative;
+            left: 200px;
             .btn-c {
               padding: 7px 15px;
             }
@@ -456,7 +506,7 @@ export default {
 
     .set—card {
       position: fixed;
-      top: 62px;
+      top: 55px;
       right: 10px;
 
       .box-card {
