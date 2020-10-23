@@ -1,6 +1,6 @@
 <template>
   <div class="analyse">
-    <div class="col-left" style="position:absolute;left:0;top:0">
+    <div class="col-left">
       <el-card class="box-card" v-show="isShowCounts">
         <h3 class="header">地址数据</h3>
         <el-divider class="divider"></el-divider>
@@ -20,7 +20,7 @@
         </div>
       </el-card>
     </div>
-    <div class="col-right" style="position:absolute;left:0;top:0">
+    <div class="col-right">
       <div class="bar">
         <el-button @click="open" type="primary" plain>导入</el-button>
         <input ref="filElem" type="file" class="upload-file" @change="getFile" multiple="multiple" accept=".csv"
@@ -36,15 +36,15 @@
             <div class="main">
               <el-form class="form" label-width="15px" size="mini" label-position="left">
                 <el-form-item v-for="(line,index) in lines" :key="line" :label="(index+1).toString()">
-                  <el-input></el-input>
+                  <el-input v-model="identificationShield[index]"></el-input>
                   <el-button class="sub" icon="el-icon-remove-outline" circle @click="decr"></el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button class="plus" icon="el-icon-circle-plus-outline" circle @click="incr"></el-button>
                 </el-form-item>
                 <el-form-item class="btn">
-                  <el-button class="btn-c">取消</el-button>
-                  <el-button class="btn-c" type="primary">确认</el-button>
+                  <el-button class="btn-c" @click="empty(1)">取消</el-button>
+                  <el-button class="btn-c" type="primary" @click="identificationConfirm">确认</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -59,16 +59,16 @@
           <div class="main">
             <el-form class="form" label-width="15px" size="mini" label-position="left">
               <el-form-item v-for="(line,index) in lines" :key="line" :label="(index+1).toString()">
-                <el-input class="input1"></el-input>
-                <el-input class="input2"></el-input>
+                <el-input class="input1" v-model="identificationMark1[index]"></el-input>
+                <el-input class="input2" v-model="identificationMark2[index]"></el-input>
                 <el-button class="sub" icon="el-icon-remove-outline" circle @click="decr"></el-button>
               </el-form-item>
               <el-form-item>
                 <el-button class="plus" icon="el-icon-circle-plus-outline" circle @click="incr"></el-button>
               </el-form-item>
               <el-form-item class="btn">
-                <el-button class="btn-c">取消</el-button>
-                <el-button class="btn-c" type="primary">确认</el-button>
+                <el-button class="btn-c" @click="empty(2)">取消</el-button>
+                <el-button class="btn-c" type="primary" @click="identificationConfirm">确认</el-button>
               </el-form-item>
             </el-form>
           </div>
@@ -91,14 +91,13 @@
                 <el-input class="input1" v-model="addressBits"></el-input>
               </el-form-item>
               <el-form-item class="btn">
-                <el-button class="btn-c">取消</el-button>
+                <el-button class="btn-c" @click="empty(3)">取消</el-button>
                 <el-button class="btn-c" type="primary" @click="setConfirm">确认</el-button>
               </el-form-item>
             </el-form>
           </div>
         </el-card>
       </div>
-
     </div>
     <slot></slot>
   </div>
@@ -122,7 +121,12 @@ export default {
       max: '',
       min: '',
       addressBits: '',
+      identificationShield: [],
+      identificationMark1: [],
+      identificationMark2: [],
       identification: '',
+      identification1: '',
+      identification2: '',
 
       inCount: Number,
       outCount: Number,
@@ -132,11 +136,47 @@ export default {
     }
   },
   methods: {
+    empty(id) {
+      switch (id) {
+        case 1:
+          this.identificationShield = [];
+          this.identification1 = '';
+          this.select1();
+          break;
+        case 2:
+          this.identificationMark1 = [];
+          this.identificationMark2 = [];
+          this.identification2 = '';
+          this.select2();
+          break;
+        case 3:
+          this.max = '';
+          this.min = '';
+          this.addressBits = '';
+          this.select3();
+          break;
+      }
+    },
     setConfirm() {
-        this.$store.state.request.max = this.max;
-       this.$store.state.request.min = this.min;
+      this.$store.state.request.max = this.max;
+      this.$store.state.request.min = this.min;
       this.getFile();
 
+    },
+    identificationConfirm() {
+      let tem = '';
+      for (let i = 0; i < this.identificationShield.length; i++) {
+        tem = tem + this.identificationShield[i] + ',- ';
+      }
+      this.identification1 = tem;
+      tem = '';
+      for (let i = 0; i < this.identificationMark1.length; i++) {
+        tem = tem + this.identificationMark1[i] + ',' + this.identificationMark2[i] + ' ';
+      }
+      this.identification2 = tem;
+      tem = '';
+      this.identification = this.identification1 + this.identification2;
+      this.getFile();
     },
 
     select1() {
@@ -164,7 +204,11 @@ export default {
       this.$refs.filElem.dispatchEvent(new MouseEvent('click'))
     },
     getFile() {
+      // const blob = new Blob([JSON.stringify(this.$refs.filElem.files)], {type: "text/csv,charset=UTF-8"});
       this.files = this.$refs.filElem.files;
+      sessionStorage.setItem('files', JSON.stringify(this.$refs.filElem.files))
+      console.log(this.$refs.filElem.files)
+      console.log(JSON.parse(sessionStorage.getItem('files')))
 
       let param = new FormData();
       for (let i = 0; i < this.files.length; i++) {
@@ -197,249 +241,255 @@ export default {
 </script>
 
 <style lang="scss">
-//.analyse {
-//  height:100%;
-//}
 
-.col-left {
-  margin: 20px 30px;
-  display: inline-block;
+.analyse {
+  height: 100%;
 
-  .box-card {
-    font-size: 12px;
-    width: 240px;
-    height: 195px;
+  .col-left {
+    position:absolute;
+    left:0;
+    top:0;
+    z-index: 1;
+    margin: 20px 30px;
+    display: inline-block;
+
+    .box-card {
+      font-size: 12px;
+      width: 240px;
+      height: 195px;
+
+      .el-card__body {
+        padding: 10px;
+      }
+
+      .header {
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .divider {
+        margin: 10px 0 0;
+        background: 0 0;
+        border-top: 1px dashed #e8eaec;
+      }
+
+      .left {
+        display: inline-block;
+      }
+
+      .right {
+        display: inline-block;
+        float: right;
+
+        p {
+          text-align: right;
+        }
+
+        .green {
+          color: green;
+        }
+
+        .red {
+          color: red;
+        }
+
+        .blue {
+          color: blue;
+        }
+      }
+    }
+  }
+
+  .col-right {
+    position:absolute;
+    left:0;
+    top:0;
+    z-index: 1;
+    margin: 20px 10px;
+    display: inline-block;
+
+    .shield {
+      margin-left: 10px;
+    }
+
+    .el-button {
+      padding: 10px 20px;
+      font-size: 10px;
+      border-radius: 6px;
+    }
+
+    .el-button--primary.is-plain {
+      color: #409EFF;
+      background: #FFFF;
+      border-color: #409EFF;
+    }
 
     .el-card__body {
       padding: 10px;
     }
 
-    .header {
-      margin: 0 auto;
-      text-align: center;
+    .bar {
+      position: fixed;
+      right: 10px;
     }
 
-    .divider {
-      margin: 10px 0 0;
-      background: 0 0;
-      border-top: 1px dashed #e8eaec;
-    }
+    .shield—card {
+      .box-card {
+        //position: absolute;
+        //left: 8px;
+        //top: 50px;
+        margin: 10px 0 0 5px;
+        font-size: 12px;
+        //width: 278px;
+        height: 280px;
+        resize: vertical;
 
-    .left {
-      display: inline-block;
-    }
-
-    .right {
-      display: inline-block;
-      float: right;
-
-      p {
-        text-align: right;
-      }
-
-      .green {
-        color: green;
-      }
-
-      .red {
-        color: red;
-      }
-
-      .blue {
-        color: blue;
-      }
-    }
-  }
-}
-
-.col-right {
-  margin: 20px 10px;
-  display: inline-block;
-  position: absolute;
-  //right: 10px;
-
-
-  .shield {
-    margin-left: 10px;
-  }
-
-  .el-button {
-    padding: 10px 20px;
-    font-size: 10px;
-    border-radius: 6px;
-  }
-
-  .el-button--primary.is-plain {
-    color: #409EFF;
-    background: #FFFF;
-    border-color: #409EFF;
-  }
-
-  .el-card__body {
-    padding: 10px;
-  }
-
-  .bar {
-    position: fixed;
-    right: 10px;
-  }
-
-  .shield—card {
-    .box-card {
-      //position: absolute;
-      //left: 8px;
-      //top: 50px;
-      margin: 10px 0 0 5px;
-      font-size: 12px;
-      //width: 278px;
-      height: 280px;
-      resize: vertical;
-
-      .header {
-        margin: 0 auto;
-        text-align: center;
-      }
-
-      .divider {
-        margin: 10px 0 10px;
-        background: 0 0;
-        border-top: 1px dashed #e8eaec;
-      }
-
-      .main {
-        display: inline-block;
-
-        .el-input {
-          width: 230px;
+        .header {
+          margin: 0 auto;
+          text-align: center;
         }
 
-        .btn {
-          position: absolute;
-          right: 33px;
+        .divider {
+          margin: 10px 0 10px;
+          background: 0 0;
+          border-top: 1px dashed #e8eaec;
+        }
 
-          .btn-c {
-            padding: 7px 15px;
+        .main {
+          display: inline-block;
+
+          .el-input {
+            width: 230px;
+          }
+
+          .btn {
+            position: absolute;
+            right: 33px;
+
+            .btn-c {
+              padding: 7px 15px;
+            }
+          }
+
+          .plus {
+            width: 230px;
+            font-size: 17px;
+            color: gray;
+            padding: 5px;
+            border: 1px dashed #e8eaec;
+          }
+
+          .sub {
+            margin-top: 5px;
+            margin-left: 5px;
+            font-size: 17px;
+            color: gray;
+            padding: 0;
+            border-width: 0;
           }
         }
-
-        .plus {
-          width: 230px;
-          font-size: 17px;
-          color: gray;
-          padding: 5px;
-          border: 1px dashed #e8eaec;
-        }
-
-        .sub {
-          margin-top: 5px;
-          margin-left: 5px;
-          font-size: 17px;
-          color: gray;
-          padding: 0;
-          border-width: 0;
-        }
       }
     }
-  }
 
-  .mark—card {
-    position: fixed;
-    top: 62px;
-    right: 10px;
+    .mark—card {
+      position: fixed;
+      top: 62px;
+      right: 10px;
 
-    .box-card {
-      margin: 10px 0 0 5px;
-      font-size: 12px;
-      height: 280px;
-      resize: vertical;
+      .box-card {
+        margin: 10px 0 0 5px;
+        font-size: 12px;
+        height: 280px;
+        resize: vertical;
 
-      .header {
-        margin: 0 auto;
-        text-align: center;
-      }
-
-      .divider {
-        margin: 10px 0 10px;
-        background: 0 0;
-        border-top: 1px dashed #e8eaec;
-      }
-
-      .main {
-        display: inline-block;
-
-        .el-input {
-          width: 220px;
+        .header {
+          margin: 0 auto;
+          text-align: center;
         }
 
-        .input2 {
-          width: 100px;
-          margin-left: 5px;
+        .divider {
+          margin: 10px 0 10px;
+          background: 0 0;
+          border-top: 1px dashed #e8eaec;
         }
 
-        .btn {
-          position: absolute;
-          right: 33px;
+        .main {
+          display: inline-block;
 
-          .btn-c {
-            padding: 7px 15px;
+          .el-input {
+            width: 220px;
+          }
+
+          .input2 {
+            width: 100px;
+            margin-left: 5px;
+          }
+
+          .btn {
+            position: absolute;
+            right: 33px;
+
+            .btn-c {
+              padding: 7px 15px;
+            }
+          }
+
+          .plus {
+            width: 325px;
+            font-size: 17px;
+            color: gray;
+            padding: 5px;
+            border: 1px dashed #e8eaec;
+          }
+
+          .sub {
+            margin-top: 5px;
+            margin-left: 5px;
+            font-size: 17px;
+            color: gray;
+            padding: 0;
+            border-width: 0;
           }
         }
-
-        .plus {
-          width: 325px;
-          font-size: 17px;
-          color: gray;
-          padding: 5px;
-          border: 1px dashed #e8eaec;
-        }
-
-        .sub {
-          margin-top: 5px;
-          margin-left: 5px;
-          font-size: 17px;
-          color: gray;
-          padding: 0;
-          border-width: 0;
-        }
       }
     }
-  }
 
-  .set—card {
-    position: fixed;
-    top: 62px;
-    right: 10px;
+    .set—card {
+      position: fixed;
+      top: 62px;
+      right: 10px;
 
-    .box-card {
-      margin: 10px 0 0 5px;
-      font-size: 12px;
-      width: 230px;
-      height: 240px;
+      .box-card {
+        margin: 10px 0 0 5px;
+        font-size: 12px;
+        width: 230px;
+        height: 240px;
 
-      .header {
-        margin: 0 auto;
-        text-align: center;
-      }
-
-      .divider {
-        margin: 10px 0 10px;
-        background: 0 0;
-        border-top: 1px dashed #e8eaec;
-      }
-
-      .main {
-        display: inline-block;
-
-        .el-input {
-          width: 110px;
+        .header {
+          margin: 0 auto;
+          text-align: center;
         }
 
-        .btn {
-          position: absolute;
-          right: 12px;
+        .divider {
+          margin: 10px 0 10px;
+          background: 0 0;
+          border-top: 1px dashed #e8eaec;
+        }
 
-          .btn-c {
-            padding: 7px 15px;
+        .main {
+          display: inline-block;
+
+          .el-input {
+            width: 110px;
+          }
+
+          .btn {
+            position: absolute;
+            right: 12px;
+
+            .btn-c {
+              padding: 7px 15px;
+            }
           }
         }
       }

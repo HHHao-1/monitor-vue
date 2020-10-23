@@ -1,7 +1,7 @@
 <template>
   <analyse>
-  <div id="analyse-draw" >
-  </div>
+    <div id="analyse-draw">
+    </div>
   </analyse>
 </template>
 <script>
@@ -260,12 +260,12 @@ export default {
                 return 0.5;
               }
             });
-             that.$children[0].isShowCounts = !that.$children[0].isShowCounts;
-             that.$children[0].inCount = node.inCount;
-             that.$children[0].outCount = node.outCount;
-             that.$children[0].inValue = node.inValue;
-             that.$children[0].outValue = node.outValue;
-             that.$children[0].value = node.value;
+            that.$children[0].isShowCounts = !that.$children[0].isShowCounts;
+            that.$children[0].inCount = node.inCount;
+            that.$children[0].outCount = node.outCount;
+            that.$children[0].inValue = node.inValue;
+            that.$children[0].outValue = node.outValue;
+            that.$children[0].value = node.value;
             // document.getElementById("outCount").innerText = "输出次数：" + node.outCount;
             // document.getElementById("inValue").innerText = "输入额度：" + node.inValue;
             // document.getElementById("outValue").innerText = "输出额度：" + node.outValue;
@@ -346,43 +346,58 @@ export default {
   }
 }
 </script>
-<style>
-svg {
+<style lang="scss">
+
+#analyse-draw {
+  svg{
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%); /* IE 9 */
+    -moz-transform: translate(-50%, -50%); /* Firefox */
+    -webkit-transform: translate(-50%, -50%); /* Safari 和 Chrome */
+    -o-transform: translate(-50%, -50%); /* Opera */
+  }
+
+  .link {
+    fill: none;
+    stroke: #666;
+    stroke-width: 1.5px;
+  }
+
+  #licensing {
+    fill: green;
+  }
+
+  .link.licensing {
+    stroke: green;
+  }
+
+  .link.resolved {
+    stroke-dasharray: 0, 2 1;
+  }
+
+  circle {
+    fill: #ccc;
+    stroke: #333;
+    stroke-width: 1.5px;
+  }
+
+  text {
+    font: 12px Microsoft YaHei;
+    pointer-events: none;
+    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+  }
+
+  .linetext {
+    font-size: 12px;
+    font-family: Microsoft YaHei;
+  }
 
 }
 
-.link {
-  fill: none;
-  stroke: #666;
-  stroke-width: 1.5px;
-}
-
-#licensing {
-  fill: green;
-}
-
-.link.licensing {
-  stroke: green;
-}
-
-.link.resolved {
-  stroke-dasharray: 0, 2 1;
-}
-
-circle {
-  fill: #ccc;
-  stroke: #333;
-  stroke-width: 1.5px;
-}
-
-text {
-  font: 12px Microsoft YaHei;
-  pointer-events: none;
-  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-}
-
-.linetext {
-  font-size: 12px;
-  font-family: Microsoft YaHei;
-}
 </style>
