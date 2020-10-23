@@ -1,21 +1,24 @@
 <template>
-  <div class="proofUpload">
+  <div class="transDataUpload">
     <div class="titleS">
       <embed class="logo" :src="url.logo" type="image/svg+xml"/>
-      <p class="word"><b>—— 调证文件解析工具</b></p>
+      <p class="word"><b>—— 交易关系图谱</b></p>
     </div>
     <div class="transDataUpload">
       <el-upload
           class="upload"
           :action="url.post"
-          name="selectFile"
-          :drag="true"
-          :multiple= "false"
-          accept=".xlsx"
+          name="selectFiles"
+          drag
+          accept=".csv"
+          multiple
           :on-success="handleUploadSuccess"
+          :on-error="handleUploadError"
       >
         <i class="el-icon-upload"></i>
         <el-button type="primary">选择文件</el-button>
+        <br/>
+        <el-button @click="download()">下载模板</el-button>
         <div class="el-upload__text">请先选择要导入的文件,并确保文件格式准确无误</div>
       </el-upload>
     </div>
@@ -26,27 +29,34 @@
 export default {
   data() {
     return {
-      url:{
+      url: {
         logo: require("../assets/logo.svg"),
-        post: "/api/huobiStat"
+        post: "/api/dealDrawData"
       }
     }
   },
   methods: {
     handleUploadSuccess(response) {
-      if(response.code === 1003){
-        alert("解析失败，表格字段缺失");
-      }else if(response.code === 1000) {
-        this.$store.commit("updateResult", response.data)
-      }
-      this.$router.push('/proofAnalyze')
+      sessionStorage.setItem("response", JSON.stringify(response))
+      this.$store.commit('getData', JSON.parse(sessionStorage.getItem("response")))
+      this.$router.push('/drawAtlas')
+    }
+    ,
+    handleUploadError(err) {
+      //文件上传失败后的操作
+      console.log(err)
+    }
+    ,
+    download() {
+      window.location.href = "/modelFile.csv";
     }
   }
 }
 </script>
 
 <style lang="scss">
-.proofUpload {
+.transDataUpload {
+
   .titleS {
     position: absolute;
     top: 22%;
@@ -62,7 +72,7 @@ export default {
     }
 
     .word {
-      margin: 0 0 30px 10px;
+      margin: 0 0 30px 40px;
       color: #696969;
       font-size: 22px;
       padding-left: 150px;
@@ -81,7 +91,7 @@ export default {
     .upload {
       .el-icon-upload {
         font-size: 120px;
-        margin: 120px 0 50px;
+        margin: 80px 0 50px;
       }
 
       .el-upload-dragger {

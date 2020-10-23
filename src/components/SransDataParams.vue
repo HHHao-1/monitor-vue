@@ -1,5 +1,6 @@
 <template>
   <div class="analyse">
+    <slot name="title"></slot>
     <div class="col-left">
       <el-card class="box-card" v-show="isShowCounts">
         <h3 class="header">地址数据</h3>
@@ -157,27 +158,25 @@ export default {
         case 1:
           this.identificationShield = [];
           this.identification1 = '';
-          this.select1();
+          this.select(1);
           break;
         case 2:
           this.identificationMark1 = [];
           this.identificationMark2 = [];
           this.identification2 = '';
-          this.select2();
+          this.select(2);
           break;
         case 3:
           this.max = '';
           this.min = '';
           this.addressBits = '';
-          this.select3();
+          this.select(3);
           break;
       }
     },
 
     //设定信息
     setConfirm() {
-      this.$store.state.request.max = this.max;
-      this.$store.state.request.min = this.min;
       this.getFile();
 
     },
@@ -201,7 +200,7 @@ export default {
 
     //button选择
     select(id) {
-      switch(id) {
+      switch (id) {
         case 1:
           this.isShowShield = !this.isShowShield;
           this.isShowMark = false;
@@ -223,7 +222,7 @@ export default {
 
     //box-card增加行
     incr(id) {
-      switch(id) {
+      switch (id) {
         case 1:
           this.lines1++;
           break;
@@ -235,7 +234,7 @@ export default {
 
     //box-card减少行
     decr(id) {
-      switch(id) {
+      switch (id) {
         case 1:
           this.lines1--;
           break;
@@ -293,7 +292,7 @@ export default {
   .col-left {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 40px;
     z-index: 1;
     margin: 20px 30px;
     display: inline-block;
@@ -348,7 +347,7 @@ export default {
   .col-right {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 40px;
     z-index: 1;
     margin: 20px 10px;
     display: inline-block;
@@ -398,9 +397,9 @@ export default {
         .main {
           display: inline-block;
 
-          .el-scrollbar__bar{
-            &.is-vertical{
-              width:0;//滚动条宽度
+          .el-scrollbar__bar {
+            &.is-vertical {
+              width: 0; //滚动条宽度
             }
           }
 
@@ -411,6 +410,7 @@ export default {
           .btn {
             position: relative;
             left: 105px;
+
             .btn-c {
               padding: 7px 15px;
             }
@@ -438,7 +438,7 @@ export default {
 
     .mark—card {
       position: fixed;
-      top: 55px;
+      top: 95px;
       right: 10px;
 
       .box-card {
@@ -461,9 +461,9 @@ export default {
         .main {
           display: inline-block;
 
-          .el-scrollbar__bar{
-            &.is-vertical{
-              width:0;//滚动条宽度
+          .el-scrollbar__bar {
+            &.is-vertical {
+              width: 0; //滚动条宽度
             }
           }
 
@@ -479,6 +479,7 @@ export default {
           .btn {
             position: relative;
             left: 200px;
+
             .btn-c {
               padding: 7px 15px;
             }
@@ -506,7 +507,7 @@ export default {
 
     .set—card {
       position: fixed;
-      top: 55px;
+      top: 95px;
       right: 10px;
 
       .box-card {

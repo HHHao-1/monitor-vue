@@ -1,17 +1,20 @@
 <template>
   <analyse>
+    <title-s :page-name="pageName" v-slot:title></title-s>
     <div id="analyse-draw">
     </div>
   </analyse>
 </template>
 <script>
 const d3 = require("d3")
-import Analyse from "@/views/Analyse";
+import Analyse from "@/components/SransDataParams";
+import TitleS from "@/components/TitleS"
 
 
 export default {
   components: {
-    Analyse
+    Analyse,
+    TitleS,
   },
   data() {
     let svg;
@@ -23,6 +26,7 @@ export default {
     let linklist;
     let identMap;
     return {
+      pageName:'交易关系图谱',
       nodelis,
       linklist,
       identMap,
@@ -342,14 +346,13 @@ export default {
 }
 </script>
 <style lang="scss">
-
 #analyse-draw {
-  svg{
+  svg {
     height: 100%;
     width: 100%;
     z-index: 0;
     position: absolute;
-    top: 50%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%); /* IE 9 */

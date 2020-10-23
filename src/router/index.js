@@ -1,32 +1,33 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Upload from '../views/Upload'
-import Draw from '../views/Draw'
-import Analyse from '../views/Analyse'
+import TransDataUpload from '../views/TransDataUpload'
+import DrawAtlas from '../views/DrawAtlas'
+import ProofAnalyze from "@/views/ProofAnalyze";
+import ProofUpload from "@/views/ProofUpload";
 
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component: Home
-  // },
   {
-    path: '/upload',
-    name: 'Upload',
-    component: Upload
+    path: '/transDataUpload',
+    name: 'TransDataUpload',
+    component: TransDataUpload
 
   },
   {
-    path: '/draw',
-    name: 'Draw',
-    component: Draw
+    path: '/drawAtlas',
+    name: 'DrawAtlas',
+    component: DrawAtlas
   },
   {
-    path: '/analyse',
-    name: 'Analyse',
-    component: Analyse
+    path: '/proofUpload',
+    name: 'ProofUpload',
+    component: ProofUpload
+  },
+  {
+    path:'/proofAnalyze',
+    name:'ProofAnalyze',
+    component: ProofAnalyze,
   },
 ]
 

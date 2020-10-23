@@ -3,27 +3,18 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-let response;
-let selectFiles;
-let min;
-let max;
-let identification;
-let files;
 export default new Vuex.Store({
   state: {
-    request:{
-      selectFiles,
-      min,
-      max,
-      identification,
-    },
-    response,
-    files,
+    response: Object,
+    results: '',
   },
   mutations: {
     getData(state,response){
       state.response =  response;
     },
+    updateResult(state, payload) {
+      state.results = payload
+    }
   },
   actions: {
   },
