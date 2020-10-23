@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="banner">
     <embed id="logoimg" :src="url.logoimg" type="image/svg+xml"/>
     <span class="word"><b>{{ pageName }}</b></span>
     <span>
@@ -26,30 +26,37 @@ export default {
 }
 </script>
 
-<style scoped>
-#logoimg {
-  margin-top: 5px;
-  width: 300px;
-  padding-left: 10px;
-}
+<style scoped lang="scss">
+.banner {
+  position: fixed;
+  width:100%;
 
-a {
-  color: #000;
-}
+  #logoimg {
+    margin-top: 5px;
+    width: 300px;
+    padding-left: 10px;
+  }
 
-.word {
-  margin-top: 10px;
-  position: absolute;
-  font-size: 23px;
-  left: 70px;
-  color: black;
-}
+  a {
+    color: #000;
+  }
 
-.userControl {
-  margin: 5px;
-  float: right;
-  padding: 12px;
-  font-size: 15px;
+  .word {
+    margin-top: 10px;
+    position: absolute;
+    font-size: 23px;
+    left: 70px;
+    color: black;
+  }
+
+  .userControl {
+    margin: 5px;
+    float: right;
+    padding: 12px;
+    font-size: 15px;
+    color: #4F4F4F;
+  }
+
 }
 
 </style>

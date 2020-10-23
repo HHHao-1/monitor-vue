@@ -1,7 +1,7 @@
 <template>
   <analyse>
-    <title-s :page-name="pageName" v-slot:title></title-s>
-    <div id="analyse-draw">
+    <title-s :page-name="pageName" v-slot:title class="titleSlot"></title-s>
+    <div class="analyse-draw">
     </div>
   </analyse>
 </template>
@@ -141,7 +141,7 @@ export default {
           .start();//开始转换
 
       var svg = this.svg;
-      svg = d3.select("#analyse-draw")
+      svg = d3.select(".analyse-draw")
           .append("svg")
           .attr('id', 'svg')
           .attr("width", width)
@@ -346,7 +346,8 @@ export default {
 }
 </script>
 <style lang="scss">
-#analyse-draw {
+
+.analyse-draw {
   svg {
     height: 100%;
     width: 100%;
