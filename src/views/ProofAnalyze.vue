@@ -4,15 +4,15 @@
     <input type="file" id="uploadFile" ref="selectFile" @change="getDataAndDeal()" accept=".xlsx"
            style="display: none;">
     <div id="luckysheet"></div>
-    <div class="topButton">
+    <div class="down-panel">
+      <el-button class="functionButton" id="download" @click="downloadFile()">下载文件</el-button>
+      <el-button type="primary" class="functionButton" id="upload" onclick="uploadFile.click()">重新上传<i
+              class="el-icon-upload el-icon--right"></i></el-button>
+    </div>
+    <div class="sheet-action">
       <el-button class="sheetName" v-for="(item,index) in sheetList" @click="sheetActive(index)" :key="index">
         {{ item }}
       </el-button>
-      <div>
-        <el-button class="functionButton" id="download" @click="downloadFile()">下载文件</el-button>
-        <el-button type="primary" class="functionButton" id="upload" onclick="uploadFile.click()">重新上传<i
-            class="el-icon-upload el-icon--right"></i></el-button>
-      </div>
     </div>
   </div>
 </template>
@@ -171,6 +171,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+  body{
+    margin: 0;
+  }
 .analyzes {
 
   .title {
@@ -188,31 +191,47 @@ export default {
     top: 200px;
   }
 
+  .el-button{
+    border-style: none none none none;
+  }
+
+  .sheetName:focus{
+    border-style: none none solid none;
+    border-width: 2px;
+    border-color: #409EFF;
+    background-color: white;
+    border-radius: 0px;
+  }
+  .sheetName:hover{
+    border-style: none none solid none;
+    border-width: 2px;
+    background-color: white;
+    border-radius: 0px;
+  }
+
   .sheetName {
     float: left;
+    padding-top: 19px;
     margin-left: 30px;
     margin-right: 10px;
+    padding-bottom: 18px;
   }
 
-  #space {
-
-  }
-
-  .topButton {
-    height: 142px;
+  .down-panel {
+    width: 100%;
+    display: flex;
+    height: 60px;
+    flex-direction: row-reverse;
     background-color: #f5f5f5;
-
   }
-
-  .sheetName {
-    margin-top: 80px;
+  .sheet-action {
+    box-sizing:border-box;
+    height: 85px;
+    border:1em solid #f5f5f5;
   }
 
   .functionButton {
-    float: right;
-    margin-left: 10px;
-    margin-right: 30px;
-    margin-top: 20px;
+    margin: 18px 30px 2px 10px;
   }
 
   h3 {

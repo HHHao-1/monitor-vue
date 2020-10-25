@@ -1,15 +1,14 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+    <div id="app">
+        <router-view/>
+    </div>
 </template>
 
 <style lang="scss">
-#app {
-  //font-family: Avenir, Helvetica, Arial, sans-serif;
-  //-webkit-font-smoothing: antialiased;
-  //-moz-osx-font-smoothing: grayscale;
-  //text-align: center;
-  //color: #2c3e50;
-}
+    #app {
+        .btn.active, .btn:active {
+            -webkit-box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+            box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+        }
+    }
 </style>

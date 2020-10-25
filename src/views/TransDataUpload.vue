@@ -78,18 +78,6 @@ export default {
       }
       return false;
     },
-
-    // handleUploadSuccess(response) {
-    //   sessionStorage.setItem("response", JSON.stringify(response))
-    //   this.$store.commit('getData', JSON.parse(sessionStorage.getItem("response")))
-    //   this.$router.push('/drawAtlas')
-    // }
-    // ,
-    // handleUploadError(err) {
-    //   //文件上传失败后的操作
-    //   console.log(err)
-    // }
-    // ,
     download() {
       window.location.href = "/modelFile.csv";
     }
