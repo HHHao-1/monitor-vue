@@ -198,13 +198,6 @@
             identificationConfirm(id) {
                 switch (id) {
                     case 1:
-                        // console.log(this.identificationShield)
-                        // let arr = []
-                        // document.getElementsByClassName('shield—card')[0]
-                        //     .getElementsByTagName('input').forEach(s => arr.push(s.value))
-                        // console.log(this.identificationShield)
-                        // this.identificationShield = arr.filter(s => s != '')
-                        // console.log(arr)
                         this.identificationShield = this.identificationShield.filter(s => s != '')
                         if (this.identificationShield.length == 0) {
                             this.$message.error('输入不能为空')
@@ -213,17 +206,7 @@
                         }
                         break;
                     case 2:
-                        // let arr1 = []
-                        // let arr2 = []
-                        // document.getElementsByClassName('mark—card')[0]
-                        //     .getElementsByClassName('input1')[0]
-                        //     .getElementsByTagName('input')
-                        //     .forEach(s => arr1.push(s.value))
                         this.identificationMark1 = this.identificationMark1.filter(s => s != '')
-                        // document.getElementsByClassName('mark—card')[0]
-                        //     .getElementsByClassName('input2')[0]
-                        //     .getElementsByTagName('input')
-                        //     .forEach(s => arr2.push(s.value))
                         this.identificationMark2 = this.identificationMark2.filter(s => s != '')
                         if (this.identificationMark1.length == 0 && this.identificationMark2.length == 0) {
                             this.$message.error('输入不能为空')
