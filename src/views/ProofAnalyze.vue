@@ -53,7 +53,7 @@ export default {
       param.append('selectFile', this.file);
       axios.post('/api/huobiStat', param).then(res => {
         var results = res.data.data;
-        if (res.data.code === 1003) {
+        if (res.data.code === 1001) {
           alert("解析失败，表格字段缺失");
         } else if (res.data.code === 1000) {
           this.$store.commit("updateResult", results);

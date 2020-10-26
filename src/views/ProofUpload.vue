@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     handleUploadSuccess(response) {
-      if(response.code === 1003){
+      if(response.code === 1001){
         alert("解析失败，表格字段缺失");
       }else if(response.code === 1000) {
         this.$store.commit("updateResult", response.data)
