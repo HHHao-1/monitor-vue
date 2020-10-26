@@ -14,6 +14,14 @@ module.exports = {
     //开启调试
     configureWebpack: {
         devtool: 'source-map'
+    },
+    chainWebpack: config => {
+        config
+            .plugin('html')
+            .tap(args => {
+                args[0].title= 'chaindigg'
+                return args
+            })
     }
 
 }

@@ -11,23 +11,26 @@ const routes = [
   {
     path: '/transDataUpload',
     name: 'TransDataUpload',
-    component: TransDataUpload
-
+    component: TransDataUpload,
+    meta:{title:'文件上传'},
   },
   {
     path: '/drawAtlas',
     name: 'DrawAtlas',
-    component: DrawAtlas
+    component: DrawAtlas,
+    meta:{title:'交易关系图谱'},
   },
   {
     path: '/proofUpload',
     name: 'ProofUpload',
-    component: ProofUpload
+    component: ProofUpload,
+    meta:{title:'文件上传'},
   },
   {
     path:'/proofAnalyze',
     name:'ProofAnalyze',
     component: ProofAnalyze,
+    meta:{title:'调证文档解析工具'},
   },
 ]
 

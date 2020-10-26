@@ -28,8 +28,6 @@ export default {
 
 <style scoped lang="scss">
 .banner {
-  position: fixed;
-  width:100%;
 
   #logoimg {
     margin-top: 5px;

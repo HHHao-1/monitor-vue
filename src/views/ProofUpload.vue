@@ -1,10 +1,10 @@
 <template>
   <div class="proofUpload">
-    <div class="titleS">
-      <embed class="logo" :src="url.logo" type="image/svg+xml"/>
-      <p class="word"><b>—— 调证文件解析工具</b></p>
-    </div>
     <div class="transDataUpload">
+      <div class="titleS">
+        <embed class="logo" :src="url.logo" type="image/svg+xml"/>
+        <p class="word"><b>—— 调证文件解析工具</b></p>
+      </div>
       <el-upload
           class="upload"
           :action="url.post"
@@ -46,69 +46,64 @@ export default {
 </script>
 
 <style lang="scss">
-.proofUpload {
-  .titleS {
-    position: absolute;
-    top: 22%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%); /* IE 9 */
-    -moz-transform: translate(-50%, -50%); /* Firefox */
-    -webkit-transform: translate(-50%, -50%); /* Safari 和 Chrome */
-    -o-transform: translate(-50%, -50%); /* Opera */
-    .logo {
-      width: 370px;
-      margin: 120px 20px 0;
-    }
+  .proofUpload {
 
-    .word {
-      margin: 0 0 30px 10px;
-      color: #696969;
-      font-size: 22px;
-      padding-left: 150px;
-    }
-  }
 
-  .transDataUpload {
-    position: absolute;
-    top: 60%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%); /* IE 9 */
-    -moz-transform: translate(-50%, -50%); /* Firefox */
-    -webkit-transform: translate(-50%, -50%); /* Safari 和 Chrome */
-    -o-transform: translate(-50%, -50%); /* Opera */
-    .upload {
-      .el-icon-upload {
-        font-size: 120px;
-        margin: 120px 0 50px;
+    .transDataUpload {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%); /* IE 9 */
+      -moz-transform: translate(-50%, -50%); /* Firefox */
+      -webkit-transform: translate(-50%, -50%); /* Safari 和 Chrome */
+      -o-transform: translate(-50%, -50%); /* Opera */
+
+      .titleS {
+        .logo {
+          width: 370px;
+          margin: 0 5px;
+        }
+
+        .word {
+          margin: 0 0 30px 40px;
+          color: #696969;
+          font-size: 22px;
+          padding-left: 107px;
+        }
       }
 
-      .el-upload-dragger {
-        width: 380px;
-        height: 360px;
-        transform: scale(1);
+      .upload {
+        .el-icon-upload {
+          font-size: 120px;
+          margin: 110px 0 80px;
+        }
 
-      }
+        .el-upload-dragger {
+          width: 380px;
+          height: 360px;
+          transform: scale(1);
 
-      .el-button--default {
-        color: #409EFF;
-        border-color: #409EFF;
+        }
 
-      }
+        .el-button--default {
+          color: #409EFF;
+          border-color: #409EFF;
 
-      .el-button {
-        width: 80%;
-        margin: 10px 0;
-      }
+        }
 
-      .el-upload__text {
-        margin: 10px 0 30px;
-        font-size: 5px;
-        color: #9C9C9C;
+        .el-button {
+          width: 80%;
+          margin: 10px 0;
+        }
 
+        .el-upload__text {
+          margin: 10px 0 30px;
+          font-size: 5px;
+          color: #9C9C9C;
+
+        }
       }
     }
   }
-}
 </style>
