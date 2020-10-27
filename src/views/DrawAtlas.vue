@@ -108,6 +108,7 @@ export default {
     },
     getList() {
       this.largeAndSmall = 1
+      this.blank()
       if (sessionStorage.getItem("response") != null) {
         this.$store.commit('getData', JSON.parse(sessionStorage.getItem("response")))
       }

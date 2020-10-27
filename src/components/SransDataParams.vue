@@ -330,11 +330,11 @@ export default {
 
   .col-left {
     position: fixed;
-    left: 70px;
     top: 70px;
     z-index: 1;
     margin: 20px 30px;
     display: inline-block;
+    left: calc(50vw - 640px);
 
     .box-card {
       font-size: 12px;
