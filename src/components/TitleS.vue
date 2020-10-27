@@ -3,7 +3,7 @@
     <embed id="logoimg" :src="url.logoimg" type="image/svg+xml"/>
     <span class="word"><b>{{ pageName }}</b></span>
     <span>
-      <el-link :href="url.login" class="userControl" :underline="false">退出登录</el-link>
+      <a :href="url.login" class="userControl">退出登录</a>
             <span class="userControl">{{ userName }}</span>
         </span>
   </div>
@@ -28,6 +28,7 @@ export default {
 
 <style scoped lang="scss">
 .banner {
+  background-color: white;
 
   #logoimg {
     margin-top: 5px;
@@ -40,19 +41,21 @@ export default {
   }
 
   .word {
-    margin-top: 10px;
+    margin-top: 15px;
     position: absolute;
-    font-size: 23px;
-    left: 70px;
-    color: black;
+    left: 60px;
+    font-size: 20px;
+    color: #2E2F2E;
+    letter-spacing: 0.12px;
+    line-height: 20px;
   }
 
   .userControl {
+    font-size: 16px;
+    color: #333333;
     margin: 5px;
     float: right;
     padding: 12px;
-    font-size: 15px;
-    color: #4F4F4F;
   }
 
 }

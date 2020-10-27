@@ -51,14 +51,21 @@ export default {
       this.file = this.$refs.selectFile.files[0];
       var param = new FormData();
       param.append('selectFile', this.file);
+      var that = this;
       axios.post('/api/huobiStat', param).then(res => {
         var results = res.data.data;
         if (res.data.code === 1001) {
-          alert("解析失败，表格字段缺失");
+          that.$alert('解析失败，表格字段缺失', '提示', {
+            confirmButtonText: '确定'
+          });
         } else if (res.data.code === 1000) {
           this.$store.commit("updateResult", results);
           this.dealData()
         }
+      }).catch(function (error) {
+        that.$alert('文件上传失败', '提示', {
+          confirmButtonText: '确定'
+        });
       })
     },
     dealData() {

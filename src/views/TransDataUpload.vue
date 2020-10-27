@@ -8,6 +8,7 @@
       </div>
       <el-upload
           class="upload"
+          ref="upload"
           action
           drag
           accept=".csv"
@@ -16,10 +17,10 @@
           multiple
           :http-request="uploadFile"
       >
-        <i class="el-icon-upload"></i>
-        <el-button type="primary">选择文件</el-button>
+        <embed class="icon" :src="url.upload" type="image/svg+xml"/>
+        <el-button class="select-btn" type="primary">选择文件</el-button>
         <br/>
-        <el-button @click="download()">下载模板</el-button>
+<!--        <el-button @click="download()">下载模板</el-button>-->
         <div class="el-upload__text">请先选择要导入的文件,并确保文件格式准确无误</div>
       </el-upload>
     </div>
@@ -34,6 +35,7 @@ export default {
     return {
       url: {
         logo: require("../assets/logo.svg"),
+        upload: require("../assets/upload.svg"),
         post: "/api/dealDrawData"
       },
       fileList: [],
@@ -48,24 +50,33 @@ export default {
       for (let i = 0; i < this.fileList.length; i++) {
         param.append("selectFiles", this.fileList[i]);
       }
-        axios.post('/api/dealDrawData', param)
-            .then(function (res) {
-              console.log(res.data);
-              if (res.data.code == 1000) {
+      this.$refs.upload.clearFiles();
+      axios.post('/api/dealDrawData', param)
+          .then(function (res) {
+            console.log(res)
+            if (res.data.code == 1000) {
+              try {
                 sessionStorage.setItem("response", JSON.stringify(res.data));
-                that.$store.commit('getData', JSON.parse(sessionStorage.getItem("response")))
-                that.$router.push('/drawAtlas')
-              } else {
-                that.$message.error('输入错误')
+              }catch (e) {
+                console.log(e)
               }
-            })
-            .catch(function (error) {
-              console.log(error);
-              that.$message.error('请求失败');
+              that.$store.commit('getData', res.data)
+              that.$router.push('/drawAtlas')
+            } else {
+              that.$message.error('输入错误')
+            }
+          })
+          .catch(function (error) {
+            this.$refs.upload.clearFiles();
+            console.log(error);
+            that.$alert('文件上传失败', '提示', {
+              confirmButtonText: '确定'
             });
+          });
     },
     change() {
       //判断上传文件数量
+      this.$refs.upload.clearFiles();
       this.length = document.querySelector("input[type=file]").files.length;
       if (this.length > 0) {
         Array.from(document.querySelector("input[type=file]").files).forEach(
@@ -76,19 +87,18 @@ export default {
             }
         );
       }
+      this.$store.commit("updateCurrentLocalFile", this.fileList)
       return false;
     },
-    download() {
-      window.location.href = "/modelFile.csv";
-    }
+    // download() {
+    //   window.location.href = "/modelFile.csv";
+    // }
   }
 }
 </script>
 
 <style lang="scss">
 .transDataUpload {
-
-
   .transDataUpload {
     position: absolute;
     top: 50%;
@@ -98,32 +108,41 @@ export default {
     -moz-transform: translate(-50%, -50%); /* Firefox */
     -webkit-transform: translate(-50%, -50%); /* Safari 和 Chrome */
     -o-transform: translate(-50%, -50%); /* Opera */
+    text-align: center;
 
     .titleS {
       .logo {
-        width: 370px;
+        display: inline-block;
+        height:60px;
+        width: 413px;
         margin: 0 5px;
       }
 
       .word {
-        margin: 0 0 30px 40px;
-        color: #696969;
-        font-size: 22px;
-        padding-left: 150px;
+        font-size: 26px;
+        margin: 0 0 65px 0;
+        color: #717171;
+        letter-spacing: 0.16px;
+        text-align: right;
+        line-height: 26px;
+        width: 220px;
+        padding-left: 230px;
       }
     }
 
     .upload {
-      .el-icon-upload {
-        font-size: 120px;
-        margin: 80px 0 50px;
+      .icon {
+        width:164px;
+        height:164px;
+        margin: 50px 0 0;
       }
 
       .el-upload-dragger {
-        width: 380px;
-        height: 360px;
+        width: 500px;
+        height: 400px;
         transform: scale(1);
-
+        border: 1px dashed #C5C5C5;
+        border-radius: 8px;
       }
 
       .el-button--default {
@@ -133,14 +152,24 @@ export default {
       }
 
       .el-button {
-        width: 80%;
-        margin: 10px 0;
+        width:400px;
+        height:56px;
+        //width: 80%;
+        margin: 45px 0 25px;
+        background: #166BD6;
+        border-radius: 4px;
+        font-family: PingFangSC-Medium;
+        font-size: 18px;
+        color: #FFFFFF;
+        letter-spacing: 0;
+        text-align: center;
+        line-height: 18px;
       }
 
       .el-upload__text {
-        margin: 10px 0 30px;
-        font-size: 5px;
-        color: #9C9C9C;
+        margin: 0 0 30px;
+        font-size: 16px;
+        color: #999999;
 
       }
     }

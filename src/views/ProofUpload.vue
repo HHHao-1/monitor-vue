@@ -10,7 +10,7 @@
           :action="url.post"
           name="selectFile"
           :drag="true"
-          multiple
+          :multiple="false"
           accept=".xlsx"
           :on-success="handleUploadSuccess"
       >

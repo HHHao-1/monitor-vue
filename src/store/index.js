@@ -7,6 +7,7 @@ export default new Vuex.Store({
   state: {
     response: Object,
     results: '',
+    graphLocalFile: []
   },
   mutations: {
     getData(state,response){
@@ -14,6 +15,9 @@ export default new Vuex.Store({
     },
     updateResult(state, payload) {
       state.results = payload
+    },
+    updateCurrentLocalFile(state, payload) {
+      state.graphLocalFile = payload
     }
   },
   actions: {
