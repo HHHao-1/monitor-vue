@@ -1,9 +1,10 @@
 <template>
   <div class="banner">
-    <embed id="logoimg" :src="url.logoimg" type="image/svg+xml"/>
-    <span class="word"><b>{{ pageName }}</b></span>
+    <embed id="logoimg" :src="url.logoimg" type="image/svg+xml" v-show="false"/>
+<!--    <span class="word">{{ pageName }}</span>-->
+    <span class="word" style="line-height: 60px; color: #333; margin-left: calc(50vw - 630px);">{{ pageName }}</span>
     <span>
-      <a :href="url.login" class="userControl">退出登录</a>
+      <a :href="url.login" class="userControl" :underline="false">退出登录</a>
             <span class="userControl">{{ userName }}</span>
         </span>
   </div>
@@ -20,7 +21,7 @@ export default {
         logoimg: require("../assets/logoimg.svg"),
         login: '/login'
       },
-      userName: '用户名预留',
+      userName: 'Admin',
     }
   }
 }
@@ -28,34 +29,38 @@ export default {
 
 <style scoped lang="scss">
 .banner {
+
+  display: block;
+  height: 60px;
   background-color: white;
+  z-index: 999;
 
   #logoimg {
-    margin-top: 5px;
-    width: 300px;
-    padding-left: 10px;
-  }
-
-  a {
-    color: #000;
+    position: relative;
+    top: 14px;
+    padding-left: 6%;
   }
 
   .word {
-    margin-top: 15px;
-    position: absolute;
-    left: 60px;
+    font-family: PingFangSC-Semibold;
     font-size: 20px;
-    color: #2E2F2E;
+    color: #292929;
     letter-spacing: 0.12px;
     line-height: 20px;
+    position: relative;
+    top: 3px;
   }
 
   .userControl {
+    margin: 22px 18.5px 0 18.5px;
+    float: right;
+    font-family: PingFangSC-Regular;
     font-size: 16px;
     color: #333333;
-    margin: 5px;
-    float: right;
-    padding: 12px;
+    letter-spacing: 0.1px;
+    line-height: 16px;
+    position: relative;
+    right: 3%;
   }
 
 }

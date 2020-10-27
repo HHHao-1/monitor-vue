@@ -3,8 +3,9 @@
 
     <div class="transDataUpload">
       <div class="titleS">
-        <embed class="logo" :src="url.logo" type="image/svg+xml"/>
-        <p class="word"><b>—— 交易关系图谱</b></p>
+<!--        <embed class="logo" :src="url.logo" type="image/svg+xml"/>-->
+<!--        <p class="word"><b>—— 交易关系图谱</b></p>-->
+        <p style="text-align: center; color: #717171; font-size: 35px;"><b>交易关系图谱</b></p>
       </div>
       <el-upload
           class="upload"

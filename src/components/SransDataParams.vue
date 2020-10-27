@@ -300,7 +300,7 @@ export default {
               if (res.data.code == 1000) {
                 try {
                   sessionStorage.setItem("response", JSON.stringify(res.data));
-                }catch (e){
+                } catch (e) {
                   console.log(e)
                 }
                 that.$store.commit('getData', res.data)
@@ -330,8 +330,8 @@ export default {
 
   .col-left {
     position: fixed;
-    left: 0;
-    top: 92px;
+    left: 70px;
+    top: 70px;
     z-index: 1;
     margin: 20px 30px;
     display: inline-block;
@@ -352,9 +352,9 @@ export default {
         font-size: 15px;
       }
 
-      .address{
+      .address {
         width: 226px;
-        word-break:break-all;
+        word-break: break-all;
         font-size: 14px;
         color: #333333;
         letter-spacing: 0;
@@ -401,8 +401,8 @@ export default {
 
   .col-right {
     position: absolute;
-    left: 0;
     top: 70px;
+    right: calc(50vw - 640px);
     z-index: 1;
     margin: 20px 10px;
     display: inline-block;
@@ -429,7 +429,7 @@ export default {
 
     .bar {
       position: fixed;
-      right: 10px;
+      right: calc(50vw - 600px);
     }
 
     .shield—card {
@@ -515,8 +515,8 @@ export default {
 
     .mark—card {
       position: fixed;
-      top: 95px;
-      right: 10px;
+      top: 125px;
+      right: calc(50vw - 600px);
 
       .box-card {
         margin: 10px 0 0 5px;
@@ -605,8 +605,8 @@ export default {
 
     .set—card {
       position: fixed;
-      top: 95px;
-      right: 10px;
+      top: 125px;
+      right: calc(50vw - 600px);
 
       .box-card {
         margin: 10px 0 0 5px;

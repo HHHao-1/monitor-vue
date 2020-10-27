@@ -3,11 +3,12 @@
     <title-s class="title" :page-name="pageName"></title-s>
     <input type="file" id="uploadFile" ref="selectFile" @change="getDataAndDeal()" accept=".xlsx"
            style="display: none;">
-    <div id="luckysheet"></div>
+    <div class="lucky-container">
+        <div id="luckysheet"></div>
+    </div>
     <div class="down-panel">
       <el-button class="functionButton" id="download" @click="downloadFile()">下载文件</el-button>
-      <el-button type="primary" class="functionButton" id="upload" onclick="uploadFile.click()">重新上传<i
-              class="el-icon-upload el-icon--right"></i></el-button>
+      <el-button type="primary" class="functionButton" id="upload" onclick="uploadFile.click()">重新上传</el-button>
     </div>
     <div class="sheet-action">
       <el-button class="sheetName" v-for="(item,index) in sheetList" @click="sheetActive(index)" :key="index">
@@ -181,21 +182,30 @@ export default {
   body{
     margin: 0;
   }
+
+
 .analyzes {
+
+  background-color: #f5f5f5;
 
   .title {
     display: block;
-    height: 50px;
+    height: 60px;
+    background-color: white;
   }
-
+  .lucky-container {
+      position: absolute;
+      background-color: #f5f5f5;
+      padding: 0 6%;
+      height: calc(100% - 200px);
+      width: 88%;
+      left: 0;
+      right: 0;
+      top: 197px;
+  }
   #luckysheet {
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    width: 100%;
-    height: calc(100% - 200px);
-    left: 0;
-    top: 200px;
+      height: 100%;
+      position: relative;
   }
 
   .el-button{
@@ -204,41 +214,75 @@ export default {
 
   .sheetName:focus{
     border-style: none none solid none;
-    border-width: 2px;
-    border-color: #409EFF;
-    background-color: white;
-    border-radius: 0px;
+    border-color: #166BD6;
+    color: #166BD6;
   }
   .sheetName:hover{
+    color: #409eff;
     border-style: none none solid none;
-    border-width: 2px;
-    background-color: white;
-    border-radius: 0px;
   }
 
   .sheetName {
     float: left;
     padding-top: 19px;
-    margin-left: 30px;
-    margin-right: 10px;
     padding-bottom: 18px;
+    border-width: 2px;
+    background-color: white;
+    border-radius: 0px;
+    color: #7D7D7D;
+    font-family: PingFangSC-Regular;
+    font-size: 15px;
+    letter-spacing: 0;
+    line-height: 15px;
+    height: 60px;
+    position: relative;
+    left: 5%;
   }
 
   .down-panel {
     width: 100%;
     display: flex;
-    height: 60px;
+    height: 68px;
     flex-direction: row-reverse;
     background-color: #f5f5f5;
   }
   .sheet-action {
-    box-sizing:border-box;
-    height: 85px;
-    border:1em solid #f5f5f5;
+    height: 60px;
+    background-color: white;
+    border:9px solid #f5f5f5;
+    border-style: none none solid none;
+    margin: 0px 6% 0 6%;
   }
 
   .functionButton {
-    margin: 18px 30px 2px 10px;
+    margin: 16px 6px 0px 6px;
+    width: 100px;
+    height: 36px;
+    position: relative;
+    right: 2%;
+  }
+
+  #upload{
+    font-family: PingFangSC-Regular;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    line-height: 14px;
+    background: #166BD6;
+    border-radius: 4px;
+    border-radius: 4px;
+  }
+
+  #download{
+    font-family: PingFangSC-Regular;
+    font-size: 14px;
+    color: #166BD6;
+    letter-spacing: 0;
+    line-height: 14px;
+    background: #FFFFFF;
+    border: 1px solid #166BD6;
+    border-radius: 4px;
+    border-radius: 4px;
   }
 
   h3 {
@@ -310,10 +354,6 @@ export default {
   /*隐藏sheet右键菜单*/
   .luckysheet-sheet-area div.luckysheet-sheets-item .luckysheet-sheets-item-menu {
     display: none;
-  }
-
-  #luckysheet-sheet-container-c {
-    /*修改标签页css*/
   }
 
   /*隐藏右键菜单*/

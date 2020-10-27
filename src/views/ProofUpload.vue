@@ -1,5 +1,6 @@
 <template>
   <div class="proofUpload">
+
     <div class="transDataUpload">
       <div class="titleS">
         <embed class="logo" :src="url.logo" type="image/svg+xml"/>
@@ -11,11 +12,14 @@
           name="selectFile"
           :drag="true"
           :multiple="false"
-          accept=".xlsx"
+          accept=""
           :on-success="handleUploadSuccess"
+          :on-error="failToUpload"
       >
-        <i class="el-icon-upload"></i>
-        <el-button type="primary">选择文件</el-button>
+        <embed class="icon" :src="url.upload" type="image/svg+xml"/>
+        <el-button class="selectFile" type="primary"><span class="buttonWordUp">选择文件</span></el-button>
+        <br/>
+        <el-button @click="download()"><span class="buttonWordDown">下载模板</span></el-button>
         <div class="el-upload__text">请先选择要导入的文件,并确保文件格式准确无误</div>
       </el-upload>
     </div>
@@ -28,6 +32,7 @@ export default {
     return {
       url:{
         logo: require("../assets/logo.svg"),
+        upload: require("../assets/upload.svg"),
         post: "/api/huobiStat"
       }
     }
@@ -35,11 +40,21 @@ export default {
   methods: {
     handleUploadSuccess(response) {
       if(response.code === 1001){
-        alert("解析失败，表格字段缺失");
+        this.$alert('解析失败，表格字段缺失', '提示', {
+          confirmButtonText: '确定'
+        });
       }else if(response.code === 1000) {
         this.$store.commit("updateResult", response.data)
       }
       this.$router.push('/proofAnalyze')
+    },
+    failToUpload(){
+      this.$alert('文件上传失败', '提示', {
+        confirmButtonText: '确定'
+      });
+    },
+    download(){
+      window.location.href = "/调证数据模板.xlsx";
     }
   }
 }
@@ -47,7 +62,6 @@ export default {
 
 <style lang="scss">
   .proofUpload {
-
 
     .transDataUpload {
       position: absolute;
@@ -60,47 +74,85 @@ export default {
       -o-transform: translate(-50%, -50%); /* Opera */
 
       .titleS {
+        text-align: center;
+
         .logo {
-          width: 370px;
-          margin: 0 5px;
+          width: 435px;
         }
 
         .word {
-          margin: 0 0 30px 40px;
-          color: #696969;
-          font-size: 22px;
-          padding-left: 107px;
+          font-family: PingFangSC-Medium;
+          font-size: 26px;
+          color: #717171;
+          letter-spacing: 0.16px;
+          text-align: right;
+          line-height: 26px;
+          margin-right: 40px;
+          margin-bottom: 71px;
+          margin-top: 12px;
         }
       }
 
       .upload {
+
+        .icon {
+              width:164px;
+              height:164px;
+              margin: 52px 0 36px 0;
+        }
         .el-icon-upload {
-          font-size: 120px;
-          margin: 110px 0 80px;
+          font-size: 165px;
+          margin-top: 92px;
+          margin-bottom: 99px;
         }
 
         .el-upload-dragger {
-          width: 380px;
-          height: 360px;
-          transform: scale(1);
-
+          width: 500px;
+          height: 480px;
         }
 
         .el-button--default {
           color: #409EFF;
           border-color: #409EFF;
-
         }
 
         .el-button {
-          width: 80%;
-          margin: 10px 0;
+          width: 400px;
+          height: 56px;
+          margin: 12px 0;
+        }
+
+        .selectFile{
+          background: #166BD6;
+          border-radius: 4px;
+        }
+
+        .buttonWordUp{
+          font-family: PingFangSC-Medium;
+          font-size: 18px;
+          color: #FFFFFF;
+          letter-spacing: 0;
+          text-align: right;
+          line-height: 18px;
+        }
+
+        .buttonWordDown{
+          font-family: PingFangSC-Medium;
+          font-size: 18px;
+          color: #166BD6;
+          letter-spacing: 0;
+          text-align: right;
+          line-height: 18px;
         }
 
         .el-upload__text {
-          margin: 10px 0 30px;
-          font-size: 5px;
-          color: #9C9C9C;
+          font-family: PingFangSC-Regular;
+          font-size: 16px;
+          color: #999999;
+          letter-spacing: 0;
+          text-align: center;
+          line-height: 16px;
+          margin-top: 12px;
 
         }
       }

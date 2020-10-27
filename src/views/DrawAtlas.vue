@@ -1,21 +1,31 @@
 <template>
-  <analyse>
+  <analyse class="analyseS">
     <div class="titleS">
       <title-s :page-name="pageName" v-slot:title class="titleSlot"></title-s>
     </div>
     <div class="painting">
-      <div class="analyse-draw" @mousedown.stop="blank" :style="{transform:enlarge(this.value)}">
+      <div class="analyse-draw" @mousedown.stop="blank">
+        <div class="picture" :style="{transform:enlarge(this.largeAndSmall)}"/>
+<!--        <div class="picture"></div>-->
       </div>
+      <!--      <div class="block">-->
+      <!--        <el-slider-->
+      <!--            v-model="value"-->
+      <!--            vertical-->
+      <!--            height="200px"-->
+      <!--            :show-tooltip="false"-->
+      <!--            @mousewheel="enlarge(this.value)"-->
+      <!--        >-->
+      <!--        </el-slider>-->
+      <!--    </div>-->
       <div class="block">
-        <el-slider
-            v-model="value"
-            vertical
-            height="200px"
-            :show-tooltip="false"
-            @mousewheel="enlarge(this.value)"
-        >
-        </el-slider>
+        <el-button class="plus" icon="el-icon-circle-plus-outline" circle @click="enLarge"></el-button>
+        <el-divider class="divider"></el-divider>
+        <el-button class="sub" icon="el-icon-remove-outline" circle @click="enSmall"></el-button>
       </div>
+      <div class="container-top-margin"></div>
+      <div class="container-left-margin"></div>
+      <div class="container-right-margin"></div>
     </div>
   </analyse>
 </template>
@@ -40,7 +50,7 @@ export default {
     let linklist;
     let identMap;
     return {
-      value: 0,
+      largeAndSmall: 0,
       pageName: '交易关系图谱',
       nodelis,
       linklist,
@@ -64,17 +74,32 @@ export default {
     handleScroll(e) {
       let direction = e.deltaY > 0 ? 'down' : 'up';
       if (direction == 'up') {
-        this.value = this.value + 5;
+        this.largeAndSmall = this.largeAndSmall + 5;
       } else if (direction == 'down') {
-        this.value = this.value - 5;
+        this.largeAndSmall = this.largeAndSmall - 5;
       }
     },
 
     enlarge(value) {
-      let v = 1 + value / 30;
+      let v = 1 + this.largeAndSmall/30;
+      if (v < 1) {
+        this.largeAndSmall = 1
+        v = 1
+      }
       return 'scale(' + v + ')';
     },
-
+    enLarge() {
+      if (this.largeAndSmall >= 100) {
+        return
+      }
+      this.largeAndSmall+=5
+    },
+    enSmall() {
+      if (this.largeAndSmall <= 1) {
+        return
+      }
+      this.largeAndSmall-=5
+    },
     blank() {
       this.$children[0].isShowCounts = false;
       this.$children[0].isShowShield = false;
@@ -82,6 +107,7 @@ export default {
       this.$children[0].isShowSet = false;
     },
     getList() {
+      this.largeAndSmall = 1
       if (sessionStorage.getItem("response") != null) {
         this.$store.commit('getData', JSON.parse(sessionStorage.getItem("response")))
       }
@@ -186,11 +212,50 @@ export default {
           .start();//开始转换
 
       var svg = this.svg;
-      svg = d3.select(".analyse-draw")
+      svg = d3.select(".picture")
           .append("svg")
           .attr('id', 'svg')
           .attr("width", width)
-          .attr("height", height);
+          .attr("height", height)
+          // .attr("width", width + margin.right + margin.left)
+          // .attr("height", height + margin.top + margin.bottom);
+
+      // width = +svg.attr("width"),
+      //     height = +svg.attr("height");
+      //
+      //
+      //
+      // var zoom = d3.zoom()
+      //     .scaleExtent([-8 / 2, 4])
+      //     .on("zoom", () => g.attr("transform", d3.event.transform));
+      //
+      // svg.call(zoom);
+
+
+      // var view = svg
+      //     .append("g")
+      //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      // // 创建zoom操作
+      //
+      // var zoom = d3.zoom()
+      //     // 设置缩放区域为0.1-100倍
+      //     .scaleExtent([0.1, 100])
+      //     .on("zoom", () => {
+      //       // 子group元素将响应zoom事件，并更新transform状态
+      //       view.attr(
+      //           "transform",
+      //           "translate(" +
+      //           (d3.event.transform.x + margin.left) +
+      //           "," +
+      //           (d3.event.transform.y + margin.top) +
+      //           ") scale(" +
+      //           d3.event.transform.k +
+      //           ")"
+      //       );
+      //     });
+      // // svg层绑定zoom事件，同时释放zoom双击事件
+      // svg.call(zoom).on("dblclick.zoom", () => {
+      // });
 
       //箭头
       var marker = svg.append("marker")
@@ -315,7 +380,6 @@ export default {
             that.$children[0].outValue = node.outValue;
             that.$children[0].value = node.value;
             that.$children[0].address = node.name;
-            console.log(node)
           })
           .call(force.drag);//将当前选中的元素传到drag函数中，使顶点可以被拖动
 
@@ -388,103 +452,165 @@ export default {
                   });
             }
           });
+
     }
   }
 }
 </script>
 <style lang="scss">
-.analyse {
+.container-left-margin {
+  z-index: 1000;
   background-color: #f5f5f5;
+  position: absolute;
+  right: 0;
+  top: 76px;
+  height: calc(100% - 76px);
+  width: calc((100% - 1280px) / 2);
+}
+.container-right-margin {
+  z-index: 1000;
+  background-color: #f5f5f5;
+  position: absolute;
+  left: 0;
+  top: 76px;
+  height: calc(100% - 76px);
+  width: calc((100% - 1280px) / 2);
+}
+.container-top-margin {
+  z-index: 1000;
+  height: 16px;
+  background-color: #f5f5f5;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+}
+.analyseS {
+  background-color: #f5f5f5;
+  width: 100%;
   height: 100%;
   z-index: -1;
-}
 
-//.titleS {
 
-.titleSlot {
-  height: 60px;
-  position: fixed;
-  width: 100%;
-  //display: block;
-}
-
-//}
-
-.painting {
-
-  .analyse-draw {
-    background-color: #FFFF;
-    width: 1200px;
+  .titleSlot {
+    height: 60px;
     position: fixed;
-    top: 76px;
-    height: calc(100% - 76px);
-    left: calc((100% - 1200px)/2);
+    width: 100%;
+  }
 
-    .el-slider {
+  .painting {
+    .analyse-draw {
+      background-color: #FFFF;
+      width: 1280px;
+      position: fixed;
+      top: 76px;
+      height: calc(100% - 76px);
+      left: calc((100% - 1280px) / 2);
+
+      .picture {
+        position: absolute;
+        width: 1280px;
+        height: calc(100% - 76px);
+
+
+        .el-slider {
+          position: absolute;
+          top: 66%;
+          left: 96%;
+        }
+
+        svg {
+          display: block;
+          height: calc(100% - 76px);
+          width: 100%;
+          z-index: 0;
+          position: absolute;
+          top: 55%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          -ms-transform: translate(-50%, -50%); /* IE 9 */
+          -moz-transform: translate(-50%, -50%); /* Firefox */
+          -webkit-transform: translate(-50%, -50%); /* Safari 和 Chrome */
+          -o-transform: translate(-50%, -50%); /* Opera */
+        }
+
+        .link {
+          fill: none;
+          stroke: #666;
+          stroke-width: 1.5px;
+        }
+
+        #licensing {
+          fill: green;
+        }
+
+        .link.licensing {
+          stroke: green;
+        }
+
+        .link.resolved {
+          stroke-dasharray: 0, 2 1;
+        }
+
+        circle {
+          fill: #ccc;
+          stroke: #333;
+          stroke-width: 1.5px;
+        }
+
+        text {
+          font: 12px Microsoft YaHei;
+          pointer-events: none;
+          text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+        }
+
+        .linetext {
+          font-size: 12px;
+          font-family: Microsoft YaHei;
+        }
+
+      }
+    }
+
+
+    .block {
+
+      top: 69%;
       position: absolute;
-      top: 66%;
-      left: 96%;
-    }
+      height: 200px;
+      right: calc(50vw - 600px);
 
-    svg {
-      display: block;
-      height: 100%;
-      width: 100%;
-      z-index: 0;
-      position: absolute;
-      top: 55%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%); /* IE 9 */
-      -moz-transform: translate(-50%, -50%); /* Firefox */
-      -webkit-transform: translate(-50%, -50%); /* Safari 和 Chrome */
-      -o-transform: translate(-50%, -50%); /* Opera */
-    }
+      .sub {
+        margin: 0;
+        display: block;
+        font-size: 40px;
+        color: #9e9e9e;
+        padding: 0;
+        border-width: 0;
+        font-family: PingFangSC-Medium;
+      }
 
-    .link {
-      fill: none;
-      stroke: #666;
-      stroke-width: 1.5px;
-    }
+      .plus {
+        margin: 0;
+        display: block;
+        font-size: 40px;
+        color: #9e9e9e;
+        padding: 0;
+        border-width: 0;
+        font-family: PingFangSC-Medium;
+      }
 
-    #licensing {
-      fill: green;
-    }
-
-    .link.licensing {
-      stroke: green;
-    }
-
-    .link.resolved {
-      stroke-dasharray: 0, 2 1;
-    }
-
-    circle {
-      fill: #ccc;
-      stroke: #333;
-      stroke-width: 1.5px;
-    }
-
-    text {
-      font: 12px Microsoft YaHei;
-      pointer-events: none;
-      text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-    }
-
-    .linetext {
-      font-size: 12px;
-      font-family: Microsoft YaHei;
+      .divider {
+        background: 0 0;
+        border-top: 3px dashed #DBDBDB;
+        transform: rotate(90deg);
+        margin: 20px 0;
+        color: #9e9e9e;
+      }
     }
 
   }
-
-  .block {
-    top: 69%;
-    left: 96%;
-    position: absolute;
-    height: 200px;
-  }
-
 }
+
 
 </style>
