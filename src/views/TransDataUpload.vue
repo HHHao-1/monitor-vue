@@ -3,8 +3,8 @@
 
     <div class="transDataUpload">
       <div class="titleS">
-<!--        <embed class="logo" :src="url.logo" type="image/svg+xml"/>-->
-<!--        <p class="word"><b>—— 交易关系图谱</b></p>-->
+        <!--        <embed class="logo" :src="url.logo" type="image/svg+xml"/>-->
+        <!--        <p class="word"><b>—— 交易关系图谱</b></p>-->
         <p style="text-align: center; color: #717171; font-size: 35px;"><b>交易关系图谱</b></p>
       </div>
       <el-upload
@@ -17,11 +17,12 @@
           :on-change="change"
           multiple
           :http-request="uploadFile"
+          :before-upload="beforeUpload"
       >
         <embed class="icon" :src="url.upload" type="image/svg+xml"/>
         <el-button class="select-btn" type="primary">选择文件</el-button>
         <br/>
-<!--        <el-button @click="download()">下载模板</el-button>-->
+        <!--        <el-button @click="download()">下载模板</el-button>-->
         <div class="el-upload__text">请先选择要导入的文件,并确保文件格式准确无误</div>
       </el-upload>
     </div>
@@ -44,14 +45,41 @@ export default {
       result: ""
     }
   },
+  mounted() {
+    let upload = document.querySelector('.el-upload');
+    upload.addEventListener('dragenter', this.onDrag, false);
+    upload.addEventListener('dragover', this.onDrag, false);
+    upload.addEventListener('drop', this.onDrop, false);
+  },
   methods: {
-    uploadFile() {
-      const that = this;
+    beforeUpload (files){
+      return false;
+    },
+    onDrag (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    },
+    onDrop (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.uploadFile(e.dataTransfer.files);
+    },
+    uploadFile(files) {
+      if (files.length != 0){
+        files.forEach(s=>this.fileList.push(s))
+      }
+      if(this.fileList.filter(s=>s.type != "text/csv").length != 0){
+        this.$message.error('文件格式错误')
+        this.fileList = []
+        return
+      }
       let param = new FormData();
       for (let i = 0; i < this.fileList.length; i++) {
         param.append("selectFiles", this.fileList[i]);
       }
       this.$refs.upload.clearFiles();
+      this.fileList = []
+      const that = this;
       axios.post('/api/dealDrawData', param)
           .then(function (res) {
             console.log(res)
@@ -68,7 +96,7 @@ export default {
             }
           })
           .catch(function (error) {
-            this.$refs.upload.clearFiles();
+            that.$refs.upload.clearFiles();
             console.log(error);
             that.$alert('文件上传失败', '提示', {
               confirmButtonText: '确定'
@@ -78,7 +106,9 @@ export default {
     change() {
       //判断上传文件数量
       this.$refs.upload.clearFiles();
+      this.fileList = []
       this.length = document.querySelector("input[type=file]").files.length;
+      this.length = $(".el-upload");
       if (this.length > 0) {
         Array.from(document.querySelector("input[type=file]").files).forEach(
             file => {
