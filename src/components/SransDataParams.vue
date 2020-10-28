@@ -50,7 +50,7 @@
                                 :label="(index+1).toString()">
                     <el-input class="input1" v-model="identificationShield[index]"></el-input>
                     <el-button class="sub" icon="el-icon-remove-outline" circle
-                               @click="decr(1)"></el-button>
+                               @click="decr(1,index)"></el-button>
                   </el-form-item>
                   <el-form-item>
                     <el-button class="plus" icon="el-icon-circle-plus-outline" circle
@@ -264,13 +264,16 @@ export default {
     },
 
     //box-card减少行
-    decr(id) {
+    decr(id,index) {
       switch (id) {
         case 1:
           this.lines1--;
+          this.identificationShield.splice(index,1)
           break;
         case 2:
           this.lines2--;
+          this.identificationMark1.splice(index,1)
+          this.identificationMark2.splice(index,1)
           break;
       }
     },

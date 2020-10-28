@@ -13,11 +13,9 @@
           action
           drag
           accept=".csv"
-          :file-list="fileList"
           :on-change="change"
           multiple
           :http-request="uploadFile"
-          :before-upload="beforeUpload"
       >
         <embed class="icon" :src="url.upload" type="image/svg+xml"/>
         <el-button class="select-btn" type="primary">选择文件</el-button>
@@ -52,63 +50,64 @@ export default {
     upload.addEventListener('drop', this.onDrop, false);
   },
   methods: {
-    beforeUpload (files){
-      return false;
-    },
-    onDrag (e) {
+    // beforeUpload (files) {
+    //   return false;
+    // },
+    onDrag(e) {
       e.stopPropagation();
       e.preventDefault();
     },
-    onDrop (e) {
+    onDrop(e) {
       e.stopPropagation();
       e.preventDefault();
       this.uploadFile(e.dataTransfer.files);
     },
     uploadFile(files) {
-      if (files.length != 0){
-        files.forEach(s=>this.fileList.push(s))
-      }
-      if(this.fileList.filter(s=>s.type != "text/csv").length != 0){
-        this.$message.error('文件格式错误')
+      if ((files.length != 0 && files.length != undefined) || this.fileList.length > 0) {
+        if (files.length != 0 && files.length != undefined) {
+          files.forEach(s => this.fileList.push(s))
+          if (this.fileList.filter(s => s.type != "text/csv").length != 0) {
+            this.$message.error('文件格式错误')
+            this.fileList = []
+            return
+          }
+        }
+        let param = new FormData();
+        for (let i = 0; i < this.fileList.length; i++) {
+          param.append("selectFiles", this.fileList[i]);
+        }
+        this.$refs.upload.clearFiles();
         this.fileList = []
-        return
-      }
-      let param = new FormData();
-      for (let i = 0; i < this.fileList.length; i++) {
-        param.append("selectFiles", this.fileList[i]);
-      }
-      this.$refs.upload.clearFiles();
-      this.fileList = []
-      const that = this;
-      axios.post('/api/dealDrawData', param)
-          .then(function (res) {
-            console.log(res)
-            if (res.data.code == 1000) {
-              try {
-                sessionStorage.setItem("response", JSON.stringify(res.data));
-              }catch (e) {
-                console.log(e)
+        const that = this;
+        axios.post('/api/dealDrawData', param)
+            .then(function (res) {
+              console.log(res)
+              if (res.data.code == 1000) {
+                try {
+                  sessionStorage.setItem("response", JSON.stringify(res.data));
+                } catch (e) {
+                  console.log(e)
+                }
+                that.$store.commit('getData', res.data)
+                that.$router.push('/drawAtlas')
+              } else {
+                that.$message.error('输入错误')
               }
-              that.$store.commit('getData', res.data)
-              that.$router.push('/drawAtlas')
-            } else {
-              that.$message.error('输入错误')
-            }
-          })
-          .catch(function (error) {
-            that.$refs.upload.clearFiles();
-            console.log(error);
-            that.$alert('文件上传失败', '提示', {
-              confirmButtonText: '确定'
+            })
+            .catch(function (error) {
+              that.$refs.upload.clearFiles();
+              console.log(error);
+              that.$alert('文件上传失败', '提示', {
+                confirmButtonText: '确定'
+              });
             });
-          });
+      }
     },
     change() {
       //判断上传文件数量
       this.$refs.upload.clearFiles();
       this.fileList = []
       this.length = document.querySelector("input[type=file]").files.length;
-      this.length = $(".el-upload");
       if (this.length > 0) {
         Array.from(document.querySelector("input[type=file]").files).forEach(
             file => {
@@ -120,7 +119,8 @@ export default {
       }
       this.$store.commit("updateCurrentLocalFile", this.fileList)
       return false;
-    },
+    }
+    ,
     // download() {
     //   window.location.href = "/modelFile.csv";
     // }
@@ -144,7 +144,7 @@ export default {
     .titleS {
       .logo {
         display: inline-block;
-        height:60px;
+        height: 60px;
         width: 413px;
         margin: 0 5px;
       }
@@ -163,8 +163,8 @@ export default {
 
     .upload {
       .icon {
-        width:164px;
-        height:164px;
+        width: 164px;
+        height: 164px;
         margin: 50px 0 0;
       }
 
@@ -183,8 +183,8 @@ export default {
       }
 
       .el-button {
-        width:400px;
-        height:56px;
+        width: 400px;
+        height: 56px;
         //width: 80%;
         margin: 45px 0 25px;
         background: #166BD6;

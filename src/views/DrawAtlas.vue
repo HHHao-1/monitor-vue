@@ -51,6 +51,7 @@ export default {
     let identMap;
     return {
       largeAndSmall: 0,
+      isChanging: false,
       pageName: '交易关系图谱',
       nodelis,
       linklist,
@@ -89,16 +90,36 @@ export default {
       return 'scale(' + v + ')';
     },
     enLarge() {
-      if (this.largeAndSmall >= 100) {
+      if (this.largeAndSmall > 100) {
         return
       }
-      this.largeAndSmall+=5
+      if (this.isChanging) {
+        return
+      }
+      this.isChanging = true
+      let intervalId = setInterval(() => {
+        this.largeAndSmall += 0.5
+      }, 10)
+      setTimeout(() => {
+        clearInterval(intervalId)
+        this.isChanging = false
+      }, 400)
     },
     enSmall() {
-      if (this.largeAndSmall <= 1) {
+      if (this.largeAndSmall <= 0) {
         return
       }
-      this.largeAndSmall-=5
+      if (this.isChanging) {
+        return
+      }
+      this.isChanging = true
+      let intervalId = setInterval(() => {
+        this.largeAndSmall -= 0.5
+      }, 10)
+      setTimeout(() => {
+        clearInterval(intervalId)
+        this.isChanging = false
+      }, 400)
     },
     blank() {
       this.$children[0].isShowCounts = false;
