@@ -149,7 +149,7 @@ export default {
       // files: FileList,
       max: '',
       min: '',
-      addressBits: '',
+      addressBits: '6',
       identificationShield: [],
       identificationMark1: [],
       identificationMark2: [],

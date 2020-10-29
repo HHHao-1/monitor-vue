@@ -6,27 +6,40 @@
     <div class="painting">
       <div class="analyse-draw" @mousedown.stop="blank">
         <div class="picture" :style="{transform:enlarge(this.largeAndSmall)}"/>
-<!--        <div class="picture"></div>-->
+        <!--        <div class="picture"></div>-->
       </div>
-      <!--      <div class="block">-->
-      <!--        <el-slider-->
-      <!--            v-model="value"-->
-      <!--            vertical-->
-      <!--            height="200px"-->
-      <!--            :show-tooltip="false"-->
-      <!--            @mousewheel="enlarge(this.value)"-->
-      <!--        >-->
-      <!--        </el-slider>-->
-      <!--    </div>-->
-      <div class="block">
-        <el-button class="plus" icon="el-icon-circle-plus-outline" circle @click="enLarge"></el-button>
-        <el-divider class="divider"></el-divider>
-        <el-button class="sub" icon="el-icon-remove-outline" circle @click="enSmall"></el-button>
+<!--      <div class="block">-->
+<!--        <div class="block1">-->
+<!--          <el-slider-->
+<!--              v-model="largeAndSmall"-->
+<!--              vertical-->
+<!--              height="110px"-->
+<!--              :show-tooltip="false"-->
+<!--              @mousewheel="enlarge(this.largeAndSmall)"-->
+<!--          >-->
+<!--          </el-slider>-->
+<!--        </div>-->
+      <div class="block-container">
+        <el-button class="plus" icon="el-icon-plus" circle @click="enLarge"></el-button>
+          <el-slider
+              v-model="largeAndSmall"
+              vertical
+              height="150px"
+              :show-tooltip="false"
+              @mousewheel="enlarge(this.largeAndSmall)"
+          />
+        <el-button class="sub" icon="el-icon-minus" circle @click="enSmall"></el-button>
+      </div>
+<!--        <div class="block2">-->
+<!--          <el-button class="plus" icon="el-icon-plus" circle @click="enLarge"></el-button>-->
+<!--          &lt;!&ndash;        <el-divider class="divider"></el-divider>&ndash;&gt;-->
+<!--          <el-button class="sub" icon="el-icon-minus" circle @click="enSmall"></el-button>-->
+<!--        </div>-->
       </div>
       <div class="container-top-margin"></div>
       <div class="container-left-margin"></div>
       <div class="container-right-margin"></div>
-    </div>
+<!--    </div>-->
   </analyse>
 </template>
 <script>
@@ -75,14 +88,20 @@ export default {
     handleScroll(e) {
       let direction = e.deltaY > 0 ? 'down' : 'up';
       if (direction == 'up') {
+        if (this.largeAndSmall > 100) {
+          return
+        }
         this.largeAndSmall = this.largeAndSmall + 5;
       } else if (direction == 'down') {
+        if (this.largeAndSmall <= 0) {
+          return
+        }
         this.largeAndSmall = this.largeAndSmall - 5;
       }
     },
 
     enlarge(value) {
-      let v = 1 + this.largeAndSmall/30;
+      let v = 1 + this.largeAndSmall / 30;
       if (v < 1) {
         this.largeAndSmall = 1
         v = 1
@@ -239,8 +258,8 @@ export default {
           .attr('id', 'svg')
           .attr("width", width)
           .attr("height", height)
-          // .attr("width", width + margin.right + margin.left)
-          // .attr("height", height + margin.top + margin.bottom);
+      // .attr("width", width + margin.right + margin.left)
+      // .attr("height", height + margin.top + margin.bottom);
 
       // width = +svg.attr("width"),
       //     height = +svg.attr("height");
@@ -489,6 +508,7 @@ export default {
   height: calc(100% - 76px);
   width: calc((100% - 1280px) / 2);
 }
+
 .container-right-margin {
   z-index: 1000;
   background-color: #f5f5f5;
@@ -498,6 +518,7 @@ export default {
   height: calc(100% - 76px);
   width: calc((100% - 1280px) / 2);
 }
+
 .container-top-margin {
   z-index: 1000;
   height: 16px;
@@ -507,6 +528,7 @@ export default {
   left: 0;
   right: 0;
 }
+
 .analyseS {
   background-color: #f5f5f5;
   width: 100%;
@@ -594,42 +616,110 @@ export default {
       }
     }
 
+    //.block {
+    //  position: absolute;
+    //  height: 200px;
+    //  width: 50px;
+    //  background-color: red;
+    //  right: calc(50vw - 600px);
+    //  bottom: 50px;
+    //
+    //  .block1 {
+    //    margin-top: 50px;
+    //    //top: calc(50vw + 145px);
+    //    //position: fixed;
+    //    //right: calc(50vw - 600px);
+    //  }
+    //
+    //  .block2 {
+    //    //background-color: blue;
+    //    position: absolute;
+    //    height: 100%;
+    //    width: 100%;
+    //    top: 0;
+    //    //right: calc(50vw - 570px);
+    //
+    //    .plus {
+    //      //position: absolute;
+    //      //top: calc(50vw + 110px);
+    //      margin: 10px auto;
+    //      display: block;
+    //      font-size: 23px;
+    //      color: #9e9e9e;
+    //      padding: 0;
+    //      border-width: 0;
+    //      font-family: PingFangSC-Medium;
+    //      color: #409EFF;
+    //    }
+    //
+    //    .sub {
+    //      //position: absolute;
+    //      //top: calc(50vw + 270px);
+    //      margin: 140px auto;
+    //      display: block;
+    //      font-size: 23px;
+    //      color: #409EFF;
+    //      padding: 0;
+    //      border-width: 0;
+    //      font-family: PingFangSC-Medium;
+    //    }
+    //  }
+    //}
 
-    .block {
-
-      top: 69%;
+    .block-container {
       position: absolute;
       height: 200px;
-      right: calc(50vw - 600px);
+      width: 50px;
+      //background-color: red;
+      right: calc(50vw - 630px);
+      //align-content: center;
+      bottom: 30px;
 
-      .sub {
-        margin: 0;
-        display: block;
-        font-size: 40px;
-        color: #9e9e9e;
-        padding: 0;
-        border-width: 0;
-        font-family: PingFangSC-Medium;
+      .el-slider {
+        transform: scale(0.7);
+        //background-color: green;
+        margin-right: 33px;
       }
 
       .plus {
-        margin: 0;
-        display: block;
-        font-size: 40px;
+        //position: absolute;
+        //top: calc(50vw + 110px);
+        //margin: 10px auto;
+        //display: block;
+        margin-left: 7px;
+        margin-bottom: 15px;
+        font-size: 18px;
         color: #9e9e9e;
         padding: 0;
         border-width: 0;
         font-family: PingFangSC-Medium;
+        color: #409EFF;
+        transform: translateY(30px)
       }
 
-      .divider {
-        background: 0 0;
-        border-top: 3px dashed #DBDBDB;
-        transform: rotate(90deg);
-        margin: 20px 0;
-        color: #9e9e9e;
+      .sub {
+        //position: absolute;
+        //top: calc(50vw + 270px);
+        //margin: 140px auto;
+        //display: block;
+        margin-left: 7px;
+        //margin-top: 15px;
+        font-size: 18px;
+        color: #409EFF;
+        padding: 0;
+        border-width: 0;
+        font-family: PingFangSC-Medium;
+        transform: translateY(-13px)
       }
     }
+
+      //.divider {
+      //  background: 0 0;
+      //  border-top: 3px dashed #DBDBDB;
+      //  transform: rotate(90deg);
+      //  margin: 20px 0;
+      //  color: #9e9e9e;
+      //}
 
   }
 }

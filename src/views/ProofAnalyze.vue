@@ -11,9 +11,18 @@
       <el-button type="primary" class="functionButton" id="upload" onclick="uploadFile.click()">重新上传</el-button>
     </div>
     <div class="sheet-action">
-      <el-button class="sheetName" v-for="(item,index) in sheetList" @click="sheetActive(index)" :key="index">
-        {{ item }}
-      </el-button>
+      <el-scrollbar
+              wrapClass="scrollbar"
+              viewClass="sheetName"
+              wrapStyle="color:'#fff';fontSize:'16px';"
+              viewStyle="color:'#fff';fontSize:'16px';width:max-content;"
+              :native="true"
+              tag="ul"
+      >
+        <el-button class="sheetName" v-for="(item,index) in sheetList" @click="sheetActive(index)" :key="index">
+          {{ item }}
+        </el-button>
+      </el-scrollbar>
     </div>
   </div>
 </template>
@@ -40,20 +49,26 @@ export default {
   },
 
   mounted() {
-    // this.$nextTick(_ => {
-    //   this.dealData()
-    // })
     this.dealData()
   },
 
   methods: {
     //传数据到后台处理
     getDataAndDeal() {
+      const loading = this.$loading({
+        lock: true,
+        text: '处理中，请稍候',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
       this.file = this.$refs.selectFile.files[0];
       var param = new FormData();
       param.append('selectFile', this.file);
       var that = this;
-      axios.post('/api/huobiStat', param).then(res => {
+      axios.post('/api/huobiStat', param, {
+        timeout:1000000
+      }).then(res => {
+        loading.close();
         var results = res.data.data;
         if (res.data.code === 1001) {
           that.$alert('解析失败，表格字段缺失', '提示', {
@@ -61,9 +76,10 @@ export default {
           });
         } else if (res.data.code === 1000) {
           this.$store.commit("updateResult", results);
-          this.dealData()
+          this.dealData();
         }
       }).catch(function (error) {
+        loading.close();
         that.$alert('文件上传失败', '提示', {
           confirmButtonText: '确定'
         });
@@ -86,48 +102,38 @@ export default {
       };
       this.sheetList = [];
       //设置表格名称
-      for (let i = 0; i < results.length; i++) {
-        if (i % 2 === 0) {
+      let n = 0;
+      let m = 0;
+      for (let i = 0; i < results.length-1; i++) {
+        if(i % 2 === 0){
           options.data[i] = {
-            "name": results[i + 1][2][0] + "_ " + "流水",
+            "name": results[0][n++][1] + "_ " + "流水",
           };
           this.sheetList.push(options.data[i].name)
-
-        } else {
+        }else{
           options.data[i] = {
-            "name": results[i][2][0] + "_ " + "统计",
-            "config": {
-              // "merge":{
-              //   "0_0": {
-              //     "r": 0,
-              //     "c": 0,
-              //     "rs": 1,
-              //     "cs": 9
-              //   }
-              // }
-            }
+            "name": results[0][m++][1] + "_ " + "统计",
           };
           this.sheetList.push(options.data[i].name)
-
         }
-        //工作表配置
+
         options.data[i].zoomRatio = 1.5;
         options.data[i].defaultColWidth = 140;
         options.data[i].defaultRowHeight = 25;
         options.data[i].celldata = [];
         options.data[i].index = i;
         options.data[i].order = i;
-        options.data[i].column = results[0][0].length;
-        options.data[i].row = results[i].length;
+        options.data[i].column = results[1][0].length;
+        options.data[i].row = results[i+1].length;
         //特定列格式处理
-        for (let j = 0; j < results[i].length; j++) {
-          for (let k = 0; k < results[0][0].length; k++) {
+        for (let j = 0; j < results[i+1].length; j++) {
+          for (let k = 0; k < results[1][0].length; k++) {
             if (i % 2 === 0 && k === 1) {
               options.data[i].celldata.push({
                 "r": j,
                 "c": k,
                 "v": {
-                  "v": results[i][j][k],
+                  "v": results[i+1][j][k],
                   "ct": {
                     "fa": "0",
                     "t": "n"
@@ -139,7 +145,7 @@ export default {
                 "r": j,
                 "c": k,
                 "v": {
-                  "v": results[i][j][k],
+                  "v": results[i+1][j][k],
                   "ct": {
                     "fa": "General",
                     "t": "g"
@@ -151,20 +157,20 @@ export default {
         }
       }
       luckysheet.create(options);
-
-
     },
     //生成Excel文件
     downloadFile() {
       var results = this.$store.state.results;
       var newbook = XLSX.utils.book_new();
-      for (var i = 0; i < results.length; i++) {
+      let n = 0;
+      let m = 0;
+      for (var i = 0; i < results.length - 1; i++) {
         if (i % 2 === 0) {
-          var wooksheet0 = XLSX.utils.aoa_to_sheet(results[i]);
-          XLSX.utils.book_append_sheet(newbook, wooksheet0, results[i + 1][2][0] + "_ " + results[i + 1][2][1] + "流水");
+          var wooksheet0 = XLSX.utils.aoa_to_sheet(results[i+1]);
+          XLSX.utils.book_append_sheet(newbook, wooksheet0, results[0][n][1] + "_ " + results[0][n++][0] + "流水");
         } else {
-          var wooksheet1 = XLSX.utils.aoa_to_sheet(results[i]);
-          XLSX.utils.book_append_sheet(newbook, wooksheet1, results[i][2][0] + "_ " + results[i][2][1] + "统计");
+          var wooksheet1 = XLSX.utils.aoa_to_sheet(results[i+1]);
+          XLSX.utils.book_append_sheet(newbook, wooksheet1, results[0][m][1] + "_ " + results[0][m++][0] + "统计");
         }
       }
       XLSX.writeFile(newbook, "火币调证整理.xlsx");
@@ -183,16 +189,15 @@ export default {
     margin: 0;
   }
 
-
 .analyzes {
 
   background-color: #f5f5f5;
 
-  .title {
-    display: block;
-    height: 60px;
-    background-color: white;
+  .el-scrollbar{
+    height: 70px;
   }
+
+
   .lucky-container {
       position: absolute;
       background-color: #f5f5f5;
@@ -224,19 +229,16 @@ export default {
 
   .sheetName {
     float: left;
-    padding-top: 19px;
-    padding-bottom: 18px;
+    padding-top: 4px;
+    padding-bottom: 15px;
     border-width: 2px;
     background-color: white;
-    border-radius: 0px;
+    border-radius: 0;
     color: #7D7D7D;
     font-family: PingFangSC-Regular;
     font-size: 15px;
     letter-spacing: 0;
     line-height: 15px;
-    height: 60px;
-    position: relative;
-    left: 5%;
   }
 
   .down-panel {
@@ -259,7 +261,7 @@ export default {
     width: 100px;
     height: 36px;
     position: relative;
-    right: 2%;
+    right: 6%;
   }
 
   #upload{
@@ -269,7 +271,6 @@ export default {
     letter-spacing: 0;
     line-height: 14px;
     background: #166BD6;
-    border-radius: 4px;
     border-radius: 4px;
   }
 
@@ -281,7 +282,6 @@ export default {
     line-height: 14px;
     background: #FFFFFF;
     border: 1px solid #166BD6;
-    border-radius: 4px;
     border-radius: 4px;
   }
 
@@ -299,9 +299,6 @@ export default {
     margin: 0 10px;
   }
 
-  a {
-    color: #42b983;
-  }
 
   /*隐藏左上角返回图标*/
   #luckysheet_info_detail_title {

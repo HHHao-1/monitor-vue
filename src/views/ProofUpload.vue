@@ -1,6 +1,5 @@
 <template>
   <div class="proofUpload">
-
     <div class="transDataUpload">
       <div class="titleS">
         <embed class="logo" :src="url.logo" type="image/svg+xml"/>
@@ -13,6 +12,7 @@
           :drag="true"
           :multiple="false"
           accept=""
+          :on-progress="openFullScreen"
           :on-success="handleUploadSuccess"
           :on-error="failToUpload"
       >
@@ -39,22 +39,35 @@ export default {
   },
   methods: {
     handleUploadSuccess(response) {
+      const loading = this.$loading();
+      loading.close();
       if(response.code === 1001){
         this.$alert('解析失败，表格字段缺失', '提示', {
           confirmButtonText: '确定'
         });
       }else if(response.code === 1000) {
         this.$store.commit("updateResult", response.data)
-      }
+      };
+
       this.$router.push('/proofAnalyze')
     },
     failToUpload(){
+      const loading = this.$loading();
+      loading.close();
       this.$alert('文件上传失败', '提示', {
         confirmButtonText: '确定'
       });
     },
     download(){
       window.location.href = "/调证数据模板.xlsx";
+    },
+    openFullScreen(){
+      const loading = this.$loading({
+        lock: true,
+        text: '处理中，请稍候',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
     }
   }
 }
