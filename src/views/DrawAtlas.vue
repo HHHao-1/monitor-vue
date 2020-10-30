@@ -142,9 +142,9 @@ export default {
     },
     blank() {
       this.$children[0].isShowCounts = false;
-      this.$children[0].isShowShield = false;
-      this.$children[0].isShowMark = false;
-      this.$children[0].isShowSet = false;
+      // this.$children[0].isShowShield = false;
+      // this.$children[0].isShowMark = false;
+      // this.$children[0].isShowSet = false;
     },
     getList() {
       this.largeAndSmall = 1
