@@ -264,16 +264,16 @@ export default {
     },
 
     //box-card减少行
-    decr(id,index) {
+    decr(id, index) {
       switch (id) {
         case 1:
           this.lines1--;
-          this.identificationShield.splice(index,1)
+          this.identificationShield.splice(index, 1)
           break;
         case 2:
           this.lines2--;
-          this.identificationMark1.splice(index,1)
-          this.identificationMark2.splice(index,1)
+          this.identificationMark1.splice(index, 1)
+          this.identificationMark2.splice(index, 1)
           break;
       }
     },

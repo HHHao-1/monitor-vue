@@ -4,7 +4,7 @@
     <input type="file" id="uploadFile" ref="selectFile" @change="getDataAndDeal()" accept=".xlsx"
            style="display: none;">
     <div class="lucky-container">
-        <div id="luckysheet"></div>
+      <div id="luckysheet"></div>
     </div>
     <div class="down-panel">
       <el-button class="functionButton" id="download" @click="downloadFile()">下载文件</el-button>
@@ -12,12 +12,12 @@
     </div>
     <div class="sheet-action">
       <el-scrollbar
-              wrapClass="scrollbar"
-              viewClass="sheetName"
-              wrapStyle="color:'#fff';fontSize:'16px';"
-              viewStyle="color:'#fff';fontSize:'16px';width:max-content;"
-              :native="true"
-              tag="ul"
+          wrapClass="scrollbar"
+          viewClass="sheetName"
+          wrapStyle="color:'#fff';fontSize:'16px';"
+          viewStyle="color:'#fff';fontSize:'16px';width:max-content;"
+          :native="true"
+          tag="ul"
       >
         <el-button class="sheetName" v-for="(item,index) in sheetList" @click="sheetActive(index)" :key="index">
           {{ item }}
@@ -66,7 +66,7 @@ export default {
       param.append('selectFile', this.file);
       var that = this;
       axios.post('/api/huobiStat', param, {
-        timeout:1000000
+        timeout: 1000000
       }).then(res => {
         loading.close();
         var results = res.data.data;
@@ -104,13 +104,13 @@ export default {
       //设置表格名称
       let n = 0;
       let m = 0;
-      for (let i = 0; i < results.length-1; i++) {
-        if(i % 2 === 0){
+      for (let i = 0; i < results.length - 1; i++) {
+        if (i % 2 === 0) {
           options.data[i] = {
             "name": results[0][n++][1] + "_ " + "流水",
           };
           this.sheetList.push(options.data[i].name)
-        }else{
+        } else {
           options.data[i] = {
             "name": results[0][m++][1] + "_ " + "统计",
           };
@@ -124,16 +124,16 @@ export default {
         options.data[i].index = i;
         options.data[i].order = i;
         options.data[i].column = results[1][0].length;
-        options.data[i].row = results[i+1].length;
+        options.data[i].row = results[i + 1].length;
         //特定列格式处理
-        for (let j = 0; j < results[i+1].length; j++) {
+        for (let j = 0; j < results[i + 1].length; j++) {
           for (let k = 0; k < results[1][0].length; k++) {
             if (i % 2 === 0 && k === 1) {
               options.data[i].celldata.push({
                 "r": j,
                 "c": k,
                 "v": {
-                  "v": results[i+1][j][k],
+                  "v": results[i + 1][j][k],
                   "ct": {
                     "fa": "0",
                     "t": "n"
@@ -145,7 +145,7 @@ export default {
                 "r": j,
                 "c": k,
                 "v": {
-                  "v": results[i+1][j][k],
+                  "v": results[i + 1][j][k],
                   "ct": {
                     "fa": "General",
                     "t": "g"
@@ -166,10 +166,10 @@ export default {
       let m = 0;
       for (var i = 0; i < results.length - 1; i++) {
         if (i % 2 === 0) {
-          var wooksheet0 = XLSX.utils.aoa_to_sheet(results[i+1]);
+          var wooksheet0 = XLSX.utils.aoa_to_sheet(results[i + 1]);
           XLSX.utils.book_append_sheet(newbook, wooksheet0, results[0][n][1] + "_ " + results[0][n++][0] + "流水");
         } else {
-          var wooksheet1 = XLSX.utils.aoa_to_sheet(results[i+1]);
+          var wooksheet1 = XLSX.utils.aoa_to_sheet(results[i + 1]);
           XLSX.utils.book_append_sheet(newbook, wooksheet1, results[0][m][1] + "_ " + results[0][m++][0] + "统计");
         }
       }
@@ -185,44 +185,46 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-  body{
-    margin: 0;
-  }
+body {
+  margin: 0;
+}
 
 .analyzes {
 
   background-color: #f5f5f5;
 
-  .el-scrollbar{
+  .el-scrollbar {
     height: 70px;
   }
 
 
   .lucky-container {
-      position: absolute;
-      background-color: #f5f5f5;
-      padding: 0 6%;
-      height: calc(100% - 200px);
-      width: 88%;
-      left: 0;
-      right: 0;
-      top: 197px;
-  }
-  #luckysheet {
-      height: 100%;
-      position: relative;
+    position: absolute;
+    background-color: #f5f5f5;
+    padding: 0 6%;
+    height: calc(100% - 200px);
+    width: 88%;
+    left: 0;
+    right: 0;
+    top: 197px;
   }
 
-  .el-button{
+  #luckysheet {
+    height: 100%;
+    position: relative;
+  }
+
+  .el-button {
     border-style: none none none none;
   }
 
-  .sheetName:focus{
+  .sheetName:focus {
     border-style: none none solid none;
     border-color: #166BD6;
     color: #166BD6;
   }
-  .sheetName:hover{
+
+  .sheetName:hover {
     color: #409eff;
     border-style: none none solid none;
   }
@@ -248,10 +250,11 @@ export default {
     flex-direction: row-reverse;
     background-color: #f5f5f5;
   }
+
   .sheet-action {
     height: 60px;
     background-color: white;
-    border:9px solid #f5f5f5;
+    border: 9px solid #f5f5f5;
     border-style: none none solid none;
     margin: 0px 6% 0 6%;
   }
@@ -264,7 +267,7 @@ export default {
     right: 6%;
   }
 
-  #upload{
+  #upload {
     font-family: PingFangSC-Regular;
     font-size: 14px;
     color: #FFFFFF;
@@ -274,7 +277,7 @@ export default {
     border-radius: 4px;
   }
 
-  #download{
+  #download {
     font-family: PingFangSC-Regular;
     font-size: 14px;
     color: #166BD6;

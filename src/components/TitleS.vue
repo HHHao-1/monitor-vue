@@ -1,14 +1,19 @@
 <template>
-  <div class="banner">
-    <embed id="logoimg" :src="url.logoimg" type="image/svg+xml" v-show="false"/>
-<!--    <span class="word">{{ pageName }}</span>-->
-    <span class="word" style="line-height: 60px; color: #333; margin-left: calc(50vw - 630px);">{{ pageName }}</span>
-    <span>
+  <div class="common">
+    <div class="banner">
+      <embed id="logoimg" :src="url.logoimg" type="image/svg+xml" v-show="true"/>
+      <!--    <span class="word">{{ pageName }}</span>-->
+      <span class="word" style="line-height: 60px; color: #333;">数字货币监控系统</span>
+      <span class="right-user">
       <a :href="url.login" class="userControl" :underline="false">退出登录</a>
-            <span class="userControl">{{ userName }}</span>
-        </span>
+            <span class="userControl admin">{{ userName }}</span>
+    </span>
+    </div>
+    <div class="bar">
+    </div>
+    <div class="content">
+    </div>
   </div>
-
 </template>
 
 <script>
@@ -18,7 +23,7 @@ export default {
   data() {
     return {
       url: {
-        logoimg: require("../assets/logoimg.svg"),
+        logoimg: require("@/assets/logoimg.svg"),
         login: '/login'
       },
       userName: 'Admin',
@@ -28,8 +33,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.banner {
+.common {
+  height: 100%;
+}
 
+.banner {
   display: block;
   height: 60px;
   background-color: white;
@@ -38,7 +46,7 @@ export default {
   #logoimg {
     position: relative;
     top: 14px;
-    padding-left: 6%;
+    margin-left: 6%;
   }
 
   .word {
@@ -52,7 +60,8 @@ export default {
   }
 
   .userControl {
-    margin: 22px 18.5px 0 18.5px;
+    //margin: 22px 6% 0 0;
+    margin-top: 22px;
     float: right;
     font-family: PingFangSC-Regular;
     font-size: 16px;
@@ -60,9 +69,30 @@ export default {
     letter-spacing: 0.1px;
     line-height: 16px;
     position: relative;
-    right: 3%;
+    right: 6%;
   }
 
+  .admin {
+    margin-right: 2% !important;
+  }
 }
+
+.bar {
+  margin-top: 15px;
+  margin-left: 6%;
+  background-color: white;
+  width: 88%;
+  height: 70px;
+}
+
+.content {
+  margin-top: 15px;
+  margin-left: 6%;
+  width: 88%;
+  //height: 100vw;
+  height: calc(100% - 220px);
+  background-color: white;
+}
+
 
 </style>

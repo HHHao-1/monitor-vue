@@ -8,38 +8,38 @@
         <div class="picture" :style="{transform:enlarge(this.largeAndSmall)}"/>
         <!--        <div class="picture"></div>-->
       </div>
-<!--      <div class="block">-->
-<!--        <div class="block1">-->
-<!--          <el-slider-->
-<!--              v-model="largeAndSmall"-->
-<!--              vertical-->
-<!--              height="110px"-->
-<!--              :show-tooltip="false"-->
-<!--              @mousewheel="enlarge(this.largeAndSmall)"-->
-<!--          >-->
-<!--          </el-slider>-->
-<!--        </div>-->
+      <!--      <div class="block">-->
+      <!--        <div class="block1">-->
+      <!--          <el-slider-->
+      <!--              v-model="largeAndSmall"-->
+      <!--              vertical-->
+      <!--              height="110px"-->
+      <!--              :show-tooltip="false"-->
+      <!--              @mousewheel="enlarge(this.largeAndSmall)"-->
+      <!--          >-->
+      <!--          </el-slider>-->
+      <!--        </div>-->
       <div class="block-container">
         <el-button class="plus" icon="el-icon-plus" circle @click="enLarge"></el-button>
-          <el-slider
-              v-model="largeAndSmall"
-              vertical
-              height="150px"
-              :show-tooltip="false"
-              @mousewheel="enlarge(this.largeAndSmall)"
-          />
+        <el-slider
+            v-model="largeAndSmall"
+            vertical
+            height="150px"
+            :show-tooltip="false"
+            @mousewheel="enlarge(this.largeAndSmall)"
+        />
         <el-button class="sub" icon="el-icon-minus" circle @click="enSmall"></el-button>
       </div>
-<!--        <div class="block2">-->
-<!--          <el-button class="plus" icon="el-icon-plus" circle @click="enLarge"></el-button>-->
-<!--          &lt;!&ndash;        <el-divider class="divider"></el-divider>&ndash;&gt;-->
-<!--          <el-button class="sub" icon="el-icon-minus" circle @click="enSmall"></el-button>-->
-<!--        </div>-->
-      </div>
-      <div class="container-top-margin"></div>
-      <div class="container-left-margin"></div>
-      <div class="container-right-margin"></div>
-<!--    </div>-->
+      <!--        <div class="block2">-->
+      <!--          <el-button class="plus" icon="el-icon-plus" circle @click="enLarge"></el-button>-->
+      <!--          &lt;!&ndash;        <el-divider class="divider"></el-divider>&ndash;&gt;-->
+      <!--          <el-button class="sub" icon="el-icon-minus" circle @click="enSmall"></el-button>-->
+      <!--        </div>-->
+    </div>
+    <div class="container-top-margin"></div>
+    <div class="container-left-margin"></div>
+    <div class="container-right-margin"></div>
+    <!--    </div>-->
   </analyse>
 </template>
 <script>
@@ -142,9 +142,9 @@ export default {
     },
     blank() {
       this.$children[0].isShowCounts = false;
-      // this.$children[0].isShowShield = false;
-      // this.$children[0].isShowMark = false;
-      // this.$children[0].isShowSet = false;
+      this.$children[0].isShowShield = false;
+      this.$children[0].isShowMark = false;
+      this.$children[0].isShowSet = false;
     },
     getList() {
       this.largeAndSmall = 1
@@ -713,13 +713,13 @@ export default {
       }
     }
 
-      //.divider {
-      //  background: 0 0;
-      //  border-top: 3px dashed #DBDBDB;
-      //  transform: rotate(90deg);
-      //  margin: 20px 0;
-      //  color: #9e9e9e;
-      //}
+    //.divider {
+    //  background: 0 0;
+    //  border-top: 3px dashed #DBDBDB;
+    //  transform: rotate(90deg);
+    //  margin: 20px 0;
+    //  color: #9e9e9e;
+    //}
 
   }
 }
