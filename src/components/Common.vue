@@ -49,14 +49,16 @@
             <!--            </template>-->
             <template slot="header" slot-scope="scope">
               <el-popover
-                  placement='bottom'
-                  width="70"
+                  placement='bottom-start'
+                  width="65"
                   trigger='click'
                   class="el-pop-width"
               >
                 <div style="text-align: left; margin: 0" v-for="item in coinKind" class="coinKind">
                   <el-checkbox>{{ item }}</el-checkbox>
                 </div>
+                <el-divider class="divider"></el-divider>
+                <el-button class="coinKind-button">确认</el-button>
                 <sppan slot="reference">币种<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i></sppan>
               </el-popover>
             </template>
@@ -533,6 +535,25 @@ export default {
   }
 }
 
+.divider {
+  margin: 10px 0 0 0;
+  background: 0 0;
+  border-top: 2px dashed #e8eaec;
+}
+
+.coinKind-button {
+  background: #166BD6;
+  border-radius: 4px;
+  width: 66px;
+  height: 30px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #FFFFFF;
+  letter-spacing: 0;
+  text-align: center;
+  line-height: 7px;
+}
+
 .content {
   //position: relative;
   overflow: auto;
@@ -555,6 +576,7 @@ export default {
       text-align: center;
       line-height: 14px;
     }
+
 
     &::v-deep .el-table_1_column_1 > .cell {
       margin-left: 15%;
