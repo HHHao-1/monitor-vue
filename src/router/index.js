@@ -4,7 +4,8 @@ import TransDataUpload from '../views/TransDataUpload'
 import DrawAtlas from '../views/DrawAtlas'
 import ProofAnalyze from "@/views/ProofAnalyze";
 import ProofUpload from "@/views/ProofUpload";
-import Title from "@/components/Common";
+import MonitorTrans from "@/views/monitorTrans";
+import MonitorAddr from "@/views/monitor";
 
 Vue.use(VueRouter)
 
@@ -35,8 +36,14 @@ const routes = [
   },
   {
     path: '/',
-    name: 'Title',
-    component: Title,
+    name: 'MonitorAddr',
+    component: MonitorAddr,
+    meta: {title: '数字货币监控系统'},
+  },
+  {
+    path: '/monitor-trans',
+    name: 'MonitorTrans',
+    component: MonitorTrans,
     meta: {title: '数字货币监控系统'},
   },
 ]
