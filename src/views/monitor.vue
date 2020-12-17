@@ -673,6 +673,12 @@ export default {
     ,
     coinKindFilter(scope) {
       if (this.monitorKind === 0) {
+        if (this.checkGroup.length === 0) {
+          scope._self.$refs[`popover-${scope.$index}`].doClose()
+          this.$children[0].table(0)
+          return
+        }
+        scope._self.$refs[`popover-${scope.$index}`].doClose()
         let coin = []
         this.checkGroup.forEach(s => {
           coin.push(s)
@@ -689,7 +695,6 @@ export default {
           }
         }).then(res => {
               this.checkGroup = []
-              scope._self.$refs[`popover-${scope.$index}`].doClose()
               if (res.data.code === 1001) {
                 that.child.total = res.data.data.total
                 let tableData = []
@@ -708,6 +713,12 @@ export default {
             });
       }
       if (this.monitorKind === 1) {
+        if (this.checkGroup.length === 0) {
+          scope._self.$refs[`popover-${scope.$index}`].doClose()
+          this.$children[0].table(1)
+          return
+        }
+        scope._self.$refs[`popover-${scope.$index}`].doClose()
         let coin = []
         this.checkGroup.forEach(s => {
           coin.push(s)
@@ -724,7 +735,6 @@ export default {
           }
         }).then(res => {
               this.checkGroup = []
-              scope._self.$refs[`popover-${scope.$index}`].doClose()
               if (res.data.code === 1001) {
                 that.child.total = res.data.data.total
                 let tableData = []
@@ -807,7 +817,6 @@ export default {
                                   return qs.stringify(params, {indices: false})
                                 }
                               }).then(res => {
-
                                     if (res.data.code === 1001) {
                                       that.child.total = res.data.data.total
                                       let tableData = []
