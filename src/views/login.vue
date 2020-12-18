@@ -21,12 +21,15 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "login",
   data() {
     return {
       height: 0,
       tmshow: 1
+
     }
   },
   methods: {
@@ -35,7 +38,7 @@ export default {
     },
     getLogin(url) {
       let that = this;
-      that.$ajax({
+      axios({
         method: "get",
         url: url,
       }).then(res => {
@@ -56,39 +59,36 @@ export default {
       var url = encodeURIComponent('https://bifrost.chaindigg.com/api/login/auth_code')
       var goto = encodeURIComponent('https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=dingoazcm5jegnjk78as0f&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=' + url)
 
-      console.log(goto);
+      // console.log(goto);
       var obj = DDLogin({id: "login_container", goto: goto, style: "border:none;", width: "365", height: "400"});
       var handleMessage = function (event) {
         var origin = event.origin;
         console.log("origin", event.origin);
         if (origin == "https://login.dingtalk.com") {
           var loginTmpCode = event.data;
-          that.$ajax({
+          axios({
             method: 'get',
             url: "https://bifrost.chaindigg.com/connect/oauth2/sns_authorize?appid=dingoazcm5jegnjk78as0f&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=REDIRECT_URI&loginTmpCode=" + loginTmpCode,
           }).then(res => {
             if (res.data.code == 0) {
-              that.$ajax({
+              console.log(res.data.data)
+              console.log(res)
+              axios({
                 method: 'get',
-                url: "/api/api/dingtalk/qrcode?code=" + res.data.data + "&state=case",
+                url: "/monitor/admin/ding/login?code=" + res.data.data + "&state=monitor",
               }).then(res => {
                 // 表示接口调用成功
-                let loginData = res.data.data;
-                if (loginData.code == 0) {
-                  that.$store.state.isAdmin = loginData.user.isAdmin;
-                  that.$store.state.isMarketGroup = loginData.user.marketGroup;
-                  that.$store.state.isDataGroup = loginData.user.dataGroup;
-                  that.$store.state.userName = loginData.user.userName;
-                  console.log(that.$store.state);
-                  // 0 表示登陆成功
-                  that.$router.push({name: 'detail'});
-                  that.$Cookies.set('isUs', '1234');
-                  that.$Cookies.set('taC', loginData.user.isAdmin);
-                  that.$Cookies.set('tmC', loginData.user.marketGroup);
-                  that.$Cookies.set('tdC', loginData.user.dataGroup);
-                  that.$Cookies.set('tmnc', loginData.user.userName);
-                } else if (loginData.code == 1) {
+                console.log(res.data)
+                let loginData = res.data.data.users[0].permission;
+                if (loginData.apply === 0) {
+                  that.$router.push('/monitor')
+
+                } else if (loginData.apply == 1) {
                   that.tmshow = 2
+                  axios({
+                    method: 'post',
+                    url: "/monitor/admin/ding/" + res.data.data.users[0].unionId
+                  })
                 } else {
                   that.tmshow = 3
                 }
@@ -146,6 +146,6 @@ export default {
 }
 
 .tm {
-  /*background: url("./../assets/back.png");*/
+  background: url("./../assets/back.png");
 }
 </style>
