@@ -2,7 +2,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/monitor': {
-        target: 'http://localhost:8080/',
+        target: 'http://localhost:8081/',
         changeOrigin: true
       }
     }

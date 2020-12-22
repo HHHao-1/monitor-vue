@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/monitor',
+    path: '/',
     name: 'MonitorAddr',
     component: MonitorAddr,
     meta: {title: '数字货币监控系统'},

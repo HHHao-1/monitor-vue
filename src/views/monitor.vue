@@ -345,6 +345,7 @@ export default {
     ,
     addA() {
       this.empty()
+      this.dialogVisible = true
       if (!this.isTrans) {
         this.cancel()
         this.addrTitle = '添加地址异动监控'
