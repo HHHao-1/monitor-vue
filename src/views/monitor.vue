@@ -370,6 +370,7 @@ export default {
     }
     ,
     editorAddr() {
+      const that = this
       if (this.value.length === 0 || this.addr.addInfo.address.length === 0) {
         this.$message.warning('请选择币种、输入地址');
         return
@@ -393,12 +394,11 @@ export default {
           let addrRule = new this.AddrRule(null, this.$children[0].userId, this.addr.event, this.value[i], this.addr.addInfo.address[i], noticeWay, this.addr.addInfo.miniValue[i], this.addr.addInfo.mark[i])
           list.push(addrRule)
         }
-        const that = this
         axios.post('/monitor/user-api/addr-rules', JSON.stringify(list), {
           headers: {"Content-Type": "application/json"}
         }).then(res => {
           if (res.data.code === 1001) {
-            this.$children[0].table(2)
+            that.$children[0].table(2)
           }
         }).catch(function (error) {
           console.log(error);
@@ -406,12 +406,12 @@ export default {
         });
       } else {
         let addrRule2 = new this.AddrRule(this.currentUid, this.$children[0].userId, this.addr.event, this.value[0], this.addr.addInfo.address[0], noticeWay, this.addr.addInfo.miniValue[0], this.addr.addInfo.mark[0])
-        const that = this
         axios.put('/monitor/user-api/addr-rules', JSON.stringify([addrRule2]), {
           headers: {"Content-Type": "application/json"}
         }).then(res => {
+          console.log(res)
           if (res.data.code === 1001) {
-            this.$children[0].table(2)
+            that.$children[0].table(2)
           }
         }).catch(function (error) {
           console.log(error);
@@ -433,6 +433,7 @@ export default {
     }
     ,
     editorTrans() {
+      const that = this
       if (this.value.length === 0 || this.trans.miniValue === 0) {
         this.$message.warning('请选择币种、输入阈值');
         return
@@ -452,12 +453,11 @@ export default {
       }
       if (this.isAdd) {
         let transRule = new this.TransRule(null, this.$children[0].userId, this.value[0], noticeWay, this.trans.miniValue)
-        const that = this
         axios.post('/monitor/user-api/trans-rules', JSON.stringify([transRule]), {
           headers: {"Content-Type": "application/json"}
         }).then(res => {
           if (res.data.code === 1001) {
-            this.$children[0].table(3)
+            that.$children[0].table(3)
           }
         }).catch(function (error) {
           console.log(error);
@@ -465,12 +465,11 @@ export default {
         });
       } else {
         let transRule2 = new this.TransRule(this.currentUid, this.$children[0].userId, this.value[0], noticeWay, this.trans.miniValue)
-        const that = this
         axios.put('/monitor/user-api/trans-rules', JSON.stringify([transRule2]), {
           headers: {"Content-Type": "application/json"}
         }).then(res => {
           if (res.data.code === 1001) {
-            this.$children[0].table(3)
+            that.$children[0].table(3)
           }
         }).catch(function (error) {
           console.log(error);

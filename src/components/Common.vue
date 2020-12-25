@@ -235,7 +235,7 @@ export default {
                     let id = (that.$parent.child.currentPage - 1) * that.$parent.child.pageSize + num[flag]
                     ++flag
                     let eventName = s.eventName
-                    let createTime = s.createTime
+                    let createTime = s.eventAddTime
                     let uid = s.id
                     createTime = moment(createTime).format('YYYY-MM-DD HH:mm:ss');
                     const addrMonitor = new this.AddrVO(id, eventName, noticeWay, createTime, uid)
@@ -296,7 +296,7 @@ export default {
                     ++flag
                     let coinKind = s.coinKind
                     let monitorMinVal = s.monitorMinVal
-                    let createTime = s.createTime
+                    let createTime = s.eventAddTime
                     let uid = s.id
                     createTime = moment(createTime).format('YYYY-MM-DD HH:mm:ss');
                     const addrMonitor = new this.TransVO(id, coinKind, monitorMinVal, noticeWay, createTime, uid)
