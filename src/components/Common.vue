@@ -11,7 +11,8 @@
       <!--      <span class="tab2">监控规则管理</span>-->
       <span class="right-user">
       <a href="" class="userControl" :underline="false">退出登录</a>
-            <span class="userControl admin">{{ userName }}</span>
+        <!--            <span class="userControl admin">{{ userName }}</span>-->
+        <el-input v-model="userId" style="width: 100px">UID：</el-input>
       </span>
     </div>
     <div class="bar">
@@ -39,7 +40,7 @@ export default {
         logoimg: require("@/assets/logoimg.svg"),
         login: '/login'
       },
-      userId: 2,
+      userId: 6,
       userName: 'Admin',
       tabOneLevel: 0,
       tabFlag: {0: true, 1: false, 2: true, 3: false, 4: true, 5: false, 6: true, 7: false},

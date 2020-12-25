@@ -86,67 +86,6 @@
             <el-table-column prop="operation" show-overflow-tooltip label="操作">
               <template slot-scope="scope">
                 <el-button class="opbl" @click="addrEdit(scope.row)" type="text" size="small">编辑</el-button>
-                <el-dialog class="di1"
-                           :title="addrTitle"
-                           :visible.sync="dialogVisible"
-                           top="30vh"
-                           :show-close=false
-                           :append-to-body=true
-                >
-                  <hr class="edit-divider"/>
-                  <div style="margin: 20px 0 30px 0">
-                    监控事件：
-                    <el-input v-model="addr.event" max="100" style="width:362px;height:34px"></el-input>
-                  </div>
-                  <div style="display:flex; margin-bottom: 20px">
-                    <div>通知方式：</div>
-                    <div>
-                      <el-checkbox-group v-model="checkList" style="padding-left: 10px;">
-                        <el-checkbox label="短信"></el-checkbox>
-                        <el-checkbox label="邮件"></el-checkbox>
-                      </el-checkbox-group>
-                    </div>
-                  </div>
-                  <div style="margin-bottom: 20px;">
-                    <div class="for" style="margin-bottom: 20px; display:inline-block;" v-for="(item,index) in addrAdd">
-                      <div style="display:inline-block;" v-show="index===0">地址信息：</div>
-                      <div style="display:inline-block; width: 70px" v-show="index!==0"></div>
-                      <el-select class="pcolor" v-model="value[index]" placeholder="请选择币种"
-                                 style="width: 140px;height: 34px">
-                        <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        >
-                        </el-option>
-                      </el-select>
-                      -
-                      <el-input v-show="isAdd" class="pcolor" v-model="addr.addInfo.address[index]" placeholder="请输入地址"
-                                max="100"
-                                style="width: 180px;height: 34px"></el-input>
-                      <el-input v-show="!isAdd" class="pcolor" v-model="addr.addInfo.address[index]" placeholder="请输入地址"
-                                max="100"
-                                style="width: 210px;height: 34px"></el-input>
-                      -
-                      <el-input v-model="addr.addInfo.mark[index]" placeholder="请输入地址标注" max="100"
-                                style="width: 140px;height: 34px"></el-input>
-                      -
-                      <el-input v-model="addr.addInfo.miniValue[index]" placeholder="请输入监控阈值" max="100"
-                                style="width: 140px;height: 34px"></el-input>
-                      <el-button v-show="isAdd" class="sub" @click="addrSub(index)" icon="el-icon-remove-outline"
-                                 circle></el-button>
-                    </div>
-                    <el-button v-show="isAdd" class="plus" circle
-                               @click="addrAdd++">+ 添加
-                    </el-button>
-                  </div>
-
-                  <span slot="footer" class="dialog-footer">
-                     <el-button type="primary" @click="editorAddr">确 定</el-button>
-                      <el-button @click="cancel">取 消</el-button>
-                    </span>
-                </el-dialog>
                 <el-button class="opbd" type="text" size="small" @click="delook(scope.row)"
                            style="margin-left: 10px">删除
                 </el-button>
@@ -181,50 +120,6 @@
             <el-table-column prop="operation" show-overflow-tooltip label="操作">
               <template slot-scope="scope">
                 <el-button class="opbl" @click="transEdit(scope.row)" type="text" size="small">编辑</el-button>
-                <el-dialog class="di1"
-                           :title="transTitle"
-                           :visible.sync="dialogVisible1"
-                           top="30vh"
-                           :show-close=false
-                           :append-to-body=true
-                           width="500px"
-                >
-                  <hr class="edit-divider"/>
-                  <div style="margin: 20px 0 30px 25px">
-                    币种：
-                    <el-select class="pcolor" v-model="value[0]" placeholder="请选择币种"
-                               style="width: 210px;height: 34px">
-                      <el-option
-                          v-for="item in options"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div style="display:flex; margin-bottom: 20px">
-                    <div>通知方式：</div>
-                    <div>
-                      <el-checkbox-group v-model="checkList" style="padding-left: 10px;">
-                        <el-checkbox label="短信"></el-checkbox>
-                        <el-checkbox label="邮件"></el-checkbox>
-                      </el-checkbox-group>
-                    </div>
-                  </div>
-                  <div style="margin-bottom: 20px;">
-                    <div class="for" style="margin-bottom: 20px; display:inline-block;">
-                      监控阈值：
-                      <el-input v-model="trans.miniValue" placeholder="请输入监控阈值" max="100"
-                                style="width: 210px;height: 34px"></el-input>
-                    </div>
-                  </div>
-
-                  <span slot="footer" class="dialog-footer">
-                     <el-button type="primary" @click="editorTrans">确 定</el-button>
-                      <el-button @click="cancel1">取 消</el-button>
-                    </span>
-                </el-dialog>
                 <el-button class="opbd" type="text" size="small" @click="delook1(scope.row)"
                            style="margin-left: 10px">删除
                 </el-button>
@@ -248,6 +143,113 @@
               </template>
             </el-table-column>
           </el-table>
+          <!--地址异动监控添加编辑dialog-->
+          <el-dialog class="di1"
+                     :title="addrTitle"
+                     :visible.sync="dialogVisible"
+                     top="30vh"
+                     :show-close=false
+                     :append-to-body=true
+          >
+            <hr class="edit-divider"/>
+            <div style="margin: 20px 0 30px 0">
+              监控事件：
+              <el-input v-model="addr.event" max="100" style="width:362px;height:34px"></el-input>
+            </div>
+            <div style="display:flex; margin-bottom: 20px">
+              <div>通知方式：</div>
+              <div>
+                <el-checkbox-group v-model="checkList" style="padding-left: 10px;">
+                  <el-checkbox label="短信"></el-checkbox>
+                  <el-checkbox label="邮件"></el-checkbox>
+                </el-checkbox-group>
+              </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+              <div class="for" style="margin-bottom: 20px; display:inline-block;" v-for="(item,index) in addrAdd">
+                <div style="display:inline-block;" v-show="index===0">地址信息：</div>
+                <div style="display:inline-block; width: 70px" v-show="index!==0"></div>
+                <el-select class="pcolor" v-model="value[index]" placeholder="请选择币种"
+                           style="width: 140px;height: 34px">
+                  <el-option
+                      v-for="item in options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+                -
+                <el-input v-show="isAdd" class="pcolor" v-model="addr.addInfo.address[index]" placeholder="请输入地址"
+                          max="100"
+                          style="width: 180px;height: 34px"></el-input>
+                <el-input v-show="!isAdd" class="pcolor" v-model="addr.addInfo.address[index]" placeholder="请输入地址"
+                          max="100"
+                          style="width: 210px;height: 34px"></el-input>
+                -
+                <el-input v-model="addr.addInfo.mark[index]" placeholder="请输入地址标注" max="100"
+                          style="width: 140px;height: 34px"></el-input>
+                -
+                <el-input v-model="addr.addInfo.miniValue[index]" placeholder="请输入监控阈值" max="100"
+                          style="width: 140px;height: 34px"></el-input>
+                <el-button v-show="isAdd" class="sub" @click="addrSub(index)" icon="el-icon-remove-outline"
+                           circle></el-button>
+              </div>
+              <el-button v-show="isAdd" class="plus" circle
+                         @click="addrAdd++">+ 添加
+              </el-button>
+            </div>
+
+            <span slot="footer" class="dialog-footer">
+                     <el-button type="primary" @click="editorAddr">确 定</el-button>
+                      <el-button @click="cancel">取 消</el-button>
+                    </span>
+          </el-dialog>
+          <!--大额交易监控添加编辑dialog-->
+          <el-dialog class="di1"
+                     :title="transTitle"
+                     :visible.sync="dialogVisible1"
+                     top="30vh"
+                     :show-close=false
+                     :append-to-body=true
+                     width="500px"
+          >
+            <hr class="edit-divider"/>
+            <div style="margin: 20px 0 30px 25px">
+              币种：
+              <el-select class="pcolor" v-model="value[0]" placeholder="请选择币种"
+                         style="width: 210px;height: 34px">
+                <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
+            <div style="display:flex; margin-bottom: 20px">
+              <div>通知方式：</div>
+              <div>
+                <el-checkbox-group v-model="checkList" style="padding-left: 10px;">
+                  <el-checkbox label="短信"></el-checkbox>
+                  <el-checkbox label="邮件"></el-checkbox>
+                </el-checkbox-group>
+              </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+              <div class="for" style="margin-bottom: 20px; display:inline-block;">
+                监控阈值：
+                <el-input v-model="trans.miniValue" placeholder="请输入监控阈值" max="100"
+                          style="width: 210px;height: 34px"></el-input>
+              </div>
+            </div>
+
+            <span slot="footer" class="dialog-footer">
+                     <el-button type="primary" @click="editorTrans">确 定</el-button>
+                      <el-button @click="cancel1">取 消</el-button>
+                    </span>
+          </el-dialog>
           <div class="page">
             <el-pagination
                 background
@@ -345,7 +347,6 @@ export default {
     ,
     addA() {
       this.empty()
-      this.dialogVisible = true
       if (!this.isTrans) {
         this.cancel()
         this.addrTitle = '添加地址异动监控'
