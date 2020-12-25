@@ -154,7 +154,7 @@
             <hr class="edit-divider"/>
             <div style="margin: 20px 0 30px 0">
               监控事件：
-              <el-input v-model="addr.event" max="100" style="width:362px;height:34px"></el-input>
+              <el-input v-model="addr.event" max="100" style="width:362px;height:34px;"></el-input>
             </div>
             <div style="display:flex; margin-bottom: 20px">
               <div>通知方式：</div>
@@ -325,6 +325,64 @@ export default {
     }
   },
   methods: {
+    // addrCheckoutSure() {
+    //   if (this.checkList.length === 0) {
+    //     if (this.addr.event === '') {
+    //       if (this.value.length === 0) {
+    //         if (this.addr.addInfo.address.length === 0) {
+    //           this.$message.warning('未填写监控事件、通知方式、监控币种、监控地址')
+    //           return
+    //         }
+    //         this.$message.warning('未填写监控事件、通知方式、监控币种')
+    //         return
+    //       }
+    //       this.$message.warning('未填写监控事件、通知方式')
+    //       return
+    //     }
+    //     this.$message.warning('未填写通知方式')
+    //   } else if (this.addr.event === '') {
+    //     if (this.value.length === 0) {
+    //       if (this.addr.addInfo.address.length === 0) {
+    //         this.$message.warning('未填写监控事件、监控币种、监控地址')
+    //         return
+    //       }
+    //       this.$message.warning('未填写监控事件、监控币种')
+    //       return
+    //     }
+    //     this.$message.warning('未填写监控事件')
+    //   } else if (this.value.length === 0) {
+    //     if (this.addr.addInfo.address.length === 0) {
+    //       this.$message.warning('未填写监控币种、监控地址')
+    //       return
+    //     }
+    //     this.$message.warning('未填写监控币种')
+    //   } else if (this.addr.addInfo.address.length === 0) {
+    //     this.$message.warning('未填写监控地址')
+    //   }
+    // }
+    // ,
+    // transCheckoutSure() {
+    //   if (this.checkList.length === 0) {
+    //     if (this.value.length === 0) {
+    //       if (this.trans.miniValue === '') {
+    //         this.$message.warning('未填写监控币种、通知方式、监控阈值')
+    //         return
+    //       }
+    //       this.$message.warning('未填写监控币种、通知方式')
+    //       return
+    //     }
+    //     this.$message.warning('未填写通知方式')
+    //   } else if (this.value.length === 0) {
+    //     if (this.trans.miniValue === '') {
+    //       this.$message.warning('未填写监控币种、监控阈值')
+    //       return
+    //     }
+    //     this.$message.warning('未填写通知方式')
+    //   } else if (this.trans.miniValue === '') {
+    //     this.$message.warning('未填写监控币种、监控阈值')
+    //   }
+    // }
+    // ,
     addrSub(index) {
       this.addrAdd--
       this.value.splice(index, 1)
@@ -371,10 +429,14 @@ export default {
     ,
     editorAddr() {
       const that = this
-      if (this.value.length === 0 || this.addr.addInfo.address.length === 0) {
-        this.$message.warning('请选择币种、输入地址');
+      if (this.addr.event === '' || this.value.length === 0 || this.addr.addInfo.address.length === 0) {
+        // this.addrCheckoutSure()
         return
       }
+      // if (this.value.length === 0 || this.addr.addInfo.address.length === 0) {
+      //   this.$message.warning('请选择币种、输入地址');
+      //   return
+      // }
       let noticeWay
       switch (this.checkList.length) {
         case 1:
@@ -434,10 +496,14 @@ export default {
     ,
     editorTrans() {
       const that = this
-      if (this.value.length === 0 || this.trans.miniValue === 0) {
-        this.$message.warning('请选择币种、输入阈值');
+      if (this.checkList.length === 0 || this.value.length === 0 || this.trans.miniValue === 0) {
+        // this.transCheckoutSure()
         return
       }
+      // if (this.value.length === 0 || this.trans.miniValue === 0) {
+      //   this.$message.warning('请选择币种、输入阈值');
+      //   return
+      // }
       let noticeWay
       switch (this.checkList.length) {
         case 1:
