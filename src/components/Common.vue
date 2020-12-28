@@ -42,7 +42,7 @@ export default {
         logoimg: require("@/assets/logoimg.svg"),
         login: '/login'
       },
-      userId: 0,
+      userId: 6,
       userName: 'Admin',
       tabOneLevel: 0,
       tabFlag: {0: true, 1: false, 2: true, 3: false, 4: true, 5: false, 6: true, 7: false},
