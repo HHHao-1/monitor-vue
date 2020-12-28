@@ -712,6 +712,7 @@ export default {
     }
     ,
     coinKindFilter(scope) {
+      const that = this;
       if (this.monitorKind === 0) {
         if (this.checkGroup.length === 0) {
           scope._self.$refs[`popover-${scope.$index}`].doClose()
@@ -723,7 +724,19 @@ export default {
         this.checkGroup.forEach(s => {
           coin.push(s)
         })
-        const that = this;
+
+        axios.get('/monitor/user-api/coincontract', {
+          params: {
+            coins: coin
+          }, paramsSerializer: params => {
+            return qs.stringify(params, {indices: false})
+          }
+        }).then(res => {
+          coin = res.data.data
+        }).catch(function (error) {
+          console.log(error);
+          that.$message.error('请求失败');
+        });
         axios.get('/monitor/user-api/monitor-addr/coin-kind', {
           params: {
             id: this.$children[0].id,
@@ -734,24 +747,24 @@ export default {
             return qs.stringify(params, {indices: false})
           }
         }).then(res => {
-              this.checkGroup = []
-              if (res.data.code === 1001) {
-                that.child.total = res.data.data.total
-                let tableData = []
-                res.data.data.data.forEach(s => {
-                  let {eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime} = s
-                  unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-                  const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
-                  tableData.push(addrMonitor)
-                })
-                that.tableData = tableData
-              }
+          this.checkGroup = []
+          if (res.data.code === 1001) {
+            that.child.total = res.data.data.total
+            let tableData = []
+            res.data.data.data.forEach(s => {
+              let {eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime} = s
+              unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+              const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
+              tableData.push(addrMonitor)
             })
-            .catch(function (error) {
-              console.log(error);
-              that.$message.error('请求失败');
-            });
+            that.tableData = tableData
+          }
+        }).catch(function (error) {
+          console.log(error);
+          that.$message.error('请求失败');
+        });
       }
+
       if (this.monitorKind === 1) {
         if (this.checkGroup.length === 0) {
           scope._self.$refs[`popover-${scope.$index}`].doClose()
@@ -763,6 +776,18 @@ export default {
         this.checkGroup.forEach(s => {
           coin.push(s)
         })
+        axios.get('/monitor/user-api/coincontract', {
+          params: {
+            coins: coin
+          }, paramsSerializer: params => {
+            return qs.stringify(params, {indices: false})
+          }
+        }).then(res => {
+          coin = res.data.data
+        }).catch(function (error) {
+          console.log(error);
+          that.$message.error('请求失败');
+        });
         const that = this;
         axios.get('/monitor/user-api/monitor-trans/coin-kind', {
           params: {
