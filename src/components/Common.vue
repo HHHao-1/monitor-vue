@@ -12,7 +12,9 @@
       <span class="right-user">
       <a href="" class="userControl" :underline="false">退出登录</a>
         <!--            <span class="userControl admin">{{ userName }}</span>-->
-        <el-input v-model="userId" style="width: 100px">UID：</el-input>
+       <div style="width: 100px;float: right;padding-right: 120px;padding-top: 10px;"><el-input v-model="userId"
+                                                                                                style="width: 100px"
+                                                                                                label="uid"></el-input></div>
       </span>
     </div>
     <div class="bar">
@@ -40,7 +42,7 @@ export default {
         logoimg: require("@/assets/logoimg.svg"),
         login: '/login'
       },
-      userId: 6,
+      userId: 0,
       userName: 'Admin',
       tabOneLevel: 0,
       tabFlag: {0: true, 1: false, 2: true, 3: false, 4: true, 5: false, 6: true, 7: false},
