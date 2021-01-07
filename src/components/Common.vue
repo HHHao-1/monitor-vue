@@ -75,6 +75,9 @@ export default {
             total: 0,
           }
           this.table(0)
+          this.$parent.value1 = ''
+          this.$parent.value2 = ''
+          this.$parent.checkGroup = []
           break
         case 2:
           this.tabFlag[0] = true
@@ -94,6 +97,8 @@ export default {
             total: 0,
           }
           this.table(2)
+          this.$parent.value1 = ''
+          this.$parent.value2 = ''
           break
         case 3:
           this.tabFlag[4] = false
@@ -113,6 +118,8 @@ export default {
             currentPage: 1,
             total: 0,
           }
+          this.$parent.value1 = ''
+          this.$parent.value2 = ''
           break
         case 4:
           this.tabFlag[4] = true
@@ -132,6 +139,8 @@ export default {
             currentPage: 1,
             total: 0,
           }
+          this.$parent.value1 = ''
+          this.$parent.value2 = ''
           break
       }
     },
