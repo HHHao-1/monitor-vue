@@ -321,7 +321,8 @@ export default {
       currentUid: 0,
       addrTitle: '',
       transTitle: '',
-      judgePage: 0
+      judgePage: 0,
+      haveSelect: false,
     }
   },
   methods: {
@@ -820,6 +821,7 @@ export default {
     }
     ,
     renderHeader(h, {column, $index}, index) {
+      let that = this
       switch ($index) {
         case 1:
           return h('span', {}, [
@@ -867,41 +869,55 @@ export default {
                         class: 'confirm',
                         on: {
                           click: () => {
-                            this.visible1 = !this.visible1
-                            let inputValue = this.value1 || 'blank'
-                            if (inputValue !== 'blank') {
-                              this.value1 = ''
-                              const that = this;
-                              axios.get('/monitor/user-api/monitor-addr/event', {
-                                params: {
-                                  id: this.$children[0].id,
-                                  currentPage: this.child.currentPage,
-                                  pageSize: this.child.pageSize,
-                                  event: this.value1
-                                }, paramsSerializer: params => {
-                                  return qs.stringify(params, {indices: false})
-                                }
-                              }).then(res => {
-                                    if (res.data.code === 1001) {
-                                      that.child.total = res.data.data.total
-                                      let tableData = []
-                                      res.data.data.data.forEach(s => {
-                                        let {eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime} = s
-                                        unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-                                        const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
-                                        tableData.push(addrMonitor)
-                                      })
-                                      that.tableData = tableData
-                                    }
-                                  })
-                                  .catch(function (error) {
-                                    console.log(error);
-                                    that.$message.error('请求失败');
-                                  });
-                            } else {
-                              this.$children[0].table(0)
-                            }
+                            that.renderEvent()
                           }
+                          // click: () => {
+                          //   const that = this;
+                          //   this.visible1 = !this.visible1
+                          //   let inputValue = that.value1 || 'blank'
+                          //   if (inputValue !== 'blank') {
+                          //     axios.get('/monitor/user-api/monitor-addr', {
+                          //       params: {
+                          //         userId: that.$children[0].userId,
+                          //         page: this.child.currentPage - 1,
+                          //         size: this.child.pageSize,
+                          //         eventName: that.value1,
+                          //       }, paramsSerializer: params => {
+                          //         return qs.stringify(params, {indices: false})
+                          //       }
+                          //     }).then(res => {
+                          //           that.haveSelect = true
+                          //           if (res.data.code === 1001) {
+                          //             that.child.total = res.data.data.totalElements
+                          //             let tableData = []
+                          //             res.data.data.content.forEach(s => {
+                          //               let {
+                          //                 eventName,
+                          //                 coinKind,
+                          //                 address,
+                          //                 addressMark,
+                          //                 transHash,
+                          //                 unusualCount,
+                          //                 unusualTime
+                          //               } = s
+                          //               unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+                          //               coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                          //               unusualCount = unusualCount.replace(/^\"|\"$/g, '')
+                          //               const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
+                          //               tableData.push(addrMonitor)
+                          //             })
+                          //             that.tableData = tableData
+                          //             that.value1 = ''
+                          //           }
+                          //         })
+                          //         .catch(function (error) {
+                          //           console.log(error);
+                          //           that.$message.error('请求失败');
+                          //         });
+                          //   } else {
+                          //     this.$children[0].table(0)
+                          //   }
+                          // }
                         }
                       }, '搜索'),
                       h('el-button', {
@@ -971,43 +987,55 @@ export default {
                         class: 'confirm',
                         on: {
                           click: () => {
-                            this.visible2 = !this.visible2
-                            let inputValue = this.value2 || 'blank'
-                            if (inputValue !== 'blank') {
-                              this.value2 = ''
-                              console.log(inputValue)
-                              const that = this;
-                              axios.get('/monitor/user-api/monitor-addr/mark', {
-                                params: {
-                                  id: this.$children[0].id,
-                                  currentPage: this.child.currentPage,
-                                  pageSize: this.child.pageSize,
-                                  mark: this.value2
-                                }, paramsSerializer: params => {
-                                  return qs.stringify(params, {indices: false})
-                                }
-                              }).then(res => {
-                                    this.value1 = ''
-                                    if (res.data.code === 1001) {
-                                      that.child.total = res.data.data.total
-                                      let tableData = []
-                                      res.data.data.data.forEach(s => {
-                                        let {eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime} = s
-                                        unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-                                        const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
-                                        tableData.push(addrMonitor)
-                                      })
-                                      that.tableData = tableData
-                                    }
-                                  })
-                                  .catch(function (error) {
-                                    console.log(error);
-                                    that.$message.error('请求失败');
-                                  });
-                            } else {
-                              this.$children[0].table(0)
-                            }
+                            that.renderMark()
                           }
+                          // click: () => {
+                          //   this.visible2 = !this.visible2
+                          //   let inputValue = this.value2 || 'blank'
+                          //   if (inputValue !== 'blank') {
+                          //     const that = this;
+                          //     axios.get('/monitor/user-api/monitor-addr', {
+                          //       params: {
+                          //         userId: this.$children[0].userId,
+                          //         page: this.child.currentPage - 1,
+                          //         size: this.child.pageSize,
+                          //         addressMark: this.value2
+                          //       }, paramsSerializer: params => {
+                          //         return qs.stringify(params, {indices: false})
+                          //       }
+                          //     }).then(res => {
+                          //           that.haveSelect = true
+                          //           if (res.data.code === 1001) {
+                          //             that.child.total = res.data.data.totalElements
+                          //             let tableData = []
+                          //             res.data.data.content.forEach(s => {
+                          //               let {
+                          //                 eventName,
+                          //                 coinKind,
+                          //                 address,
+                          //                 addressMark,
+                          //                 transHash,
+                          //                 unusualCount,
+                          //                 unusualTime
+                          //               } = s
+                          //               unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+                          //               coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                          //               unusualCount = unusualCount.replace(/^\"|\"$/g, '')
+                          //               const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
+                          //               tableData.push(addrMonitor)
+                          //             })
+                          //             that.tableData = tableData
+                          //             that.value2 = ''
+                          //           }
+                          //         })
+                          //         .catch(function (error) {
+                          //           console.log(error);
+                          //           that.$message.error('请求失败');
+                          //         });
+                          //   } else {
+                          //     this.$children[0].table(0)
+                          //   }
+                          // }
                         }
                       }, '确认'),
                       h('el-button', {
@@ -1035,9 +1063,108 @@ export default {
       }
     }
     ,
+    renderEvent() {
+      const that = this;
+      this.visible1 = !this.visible1
+      let inputValue = that.value1 || 'blank'
+      if (inputValue !== 'blank') {
+        axios.get('/monitor/user-api/monitor-addr', {
+          params: {
+            userId: that.$children[0].userId,
+            page: this.child.currentPage - 1,
+            size: this.child.pageSize,
+            eventName: that.value1,
+          }, paramsSerializer: params => {
+            return qs.stringify(params, {indices: false})
+          }
+        }).then(res => {
+              that.haveSelect = true
+              if (res.data.code === 1001) {
+                that.child.total = res.data.data.totalElements
+                let tableData = []
+                res.data.data.content.forEach(s => {
+                  let {
+                    eventName,
+                    coinKind,
+                    address,
+                    addressMark,
+                    transHash,
+                    unusualCount,
+                    unusualTime
+                  } = s
+                  unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+                  coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                  unusualCount = unusualCount.replace(/^\"|\"$/g, '')
+                  const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
+                  tableData.push(addrMonitor)
+                })
+                that.tableData = tableData
+                that.value1 = ''
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+              that.$message.error('请求失败');
+            });
+      } else {
+        this.$children[0].table(0)
+      }
+    },
+    renderMark() {
+      const that = this;
+      this.visible2 = !this.visible2
+      let inputValue = this.value2 || 'blank'
+      if (inputValue !== 'blank') {
+        const that = this;
+        axios.get('/monitor/user-api/monitor-addr', {
+          params: {
+            userId: this.$children[0].userId,
+            page: this.child.currentPage - 1,
+            size: this.child.pageSize,
+            addressMark: this.value2
+          }, paramsSerializer: params => {
+            return qs.stringify(params, {indices: false})
+          }
+        }).then(res => {
+              that.haveSelect = true
+              if (res.data.code === 1001) {
+                that.child.total = res.data.data.totalElements
+                let tableData = []
+                res.data.data.content.forEach(s => {
+                  let {
+                    eventName,
+                    coinKind,
+                    address,
+                    addressMark,
+                    transHash,
+                    unusualCount,
+                    unusualTime
+                  } = s
+                  unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+                  coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                  unusualCount = unusualCount.replace(/^\"|\"$/g, '')
+                  const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
+                  tableData.push(addrMonitor)
+                })
+                that.tableData = tableData
+                that.value2 = ''
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+              that.$message.error('请求失败');
+            });
+      } else {
+        this.$children[0].table(0)
+      }
+    },
     handleCurrentChange(val) {
       this.child.currentPage = val
-      this.$children[0].table(this.monitorKind)
+      if (!this.haveSelect) {
+        this.$children[0].table(this.monitorKind)
+      } else {
+
+      }
     }
     ,
     handlePrevChange(val) {
@@ -1201,6 +1328,10 @@ export default {
   border-radius: 4px;
   background-color: rgba(255, 255, 255, 0);
   margin: 5px 0 0 70px;
+}
+
+.el-pop-width {
+  width: auto;
 }
 
 

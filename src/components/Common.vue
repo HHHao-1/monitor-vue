@@ -42,16 +42,17 @@ export default {
         logoimg: require("@/assets/logoimg.svg"),
         login: '/login'
       },
-      userId: 6,
+      userId: 2,
       userName: 'Admin',
       tabOneLevel: 0,
       tabFlag: {0: true, 1: false, 2: true, 3: false, 4: true, 5: false, 6: true, 7: false},
+      coinSearch: []
     }
   },
   mounted() {
     this.tabStyle(1)
     this.coinList()
-    this.table(0)
+    // this.table(0)
   },
   methods: {
     // tab转换
@@ -68,7 +69,11 @@ export default {
           this.tabFlag[7] = false
           this.tabOneLevel = 0
           this.$parent.monitorKind = 0
-          this.$parent.child.currentPage = 1
+          this.$parent.child = {
+            pageSize: 8,
+            currentPage: 1,
+            total: 0,
+          }
           this.table(0)
           break
         case 2:
@@ -83,7 +88,11 @@ export default {
           this.tabOneLevel = 1
           this.$parent.monitorKind = 2
           this.$parent.isTrans = false
-          this.$parent.child.currentPage = 1
+          this.$parent.child = {
+            pageSize: 8,
+            currentPage: 1,
+            total: 0,
+          }
           this.table(2)
           break
         case 3:
@@ -99,7 +108,11 @@ export default {
             this.$parent.isTrans = false
             this.table(2)
           }
-          this.$parent.child.currentPage = 1
+          this.$parent.child = {
+            pageSize: 8,
+            currentPage: 1,
+            total: 0,
+          }
           break
         case 4:
           this.tabFlag[4] = true
@@ -114,18 +127,23 @@ export default {
             this.$parent.isTrans = true
             this.table(3)
           }
-          this.$parent.child.currentPage = 1
+          this.$parent.child = {
+            pageSize: 8,
+            currentPage: 1,
+            total: 0,
+          }
           break
       }
     },
     //coin-list
     coinList() {
       const that = this;
-      axios.get('/monitor/user-api/coinlist').then(res => {
+      axios.get('/monitor/user-api/coins').then(res => {
             if (res.data.code === 1001) {
               let tableData = []
+              that.coinSearch = res.data.data
               res.data.data.forEach(s => {
-                tableData.push(s)
+                tableData.push(s.coinName)
               })
               that.$parent.coinKind = tableData
             }
@@ -142,17 +160,19 @@ export default {
         case 0:
           axios.get('/monitor/user-api/monitor-addr', {
             params: {
-              id: this.userId,
-              currentPage: that.$parent.child.currentPage,
-              pageSize: that.$parent.child.pageSize,
+              userId: this.userId,
+              page: that.$parent.child.currentPage - 1,
+              size: that.$parent.child.pageSize,
             }
           }).then(res => {
                 if (res.data.code === 1001) {
-                  that.$parent.child.total = res.data.data.total
+                  that.$parent.child.total = res.data.data.totalElements
                   let tableData = []
-                  res.data.data.data.forEach(s => {
+                  res.data.data.content.forEach(s => {
                     let {eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime} = s
                     unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+                    coinKind = that.coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                    unusualCount = unusualCount.replace(/^\"|\"$/g, '')
                     const addrMonitor = new this.AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
                     tableData.push(addrMonitor)
                   })
@@ -169,17 +189,19 @@ export default {
         case 1:
           axios.get('/monitor/user-api/monitor-trans', {
             params: {
-              id: this.userId,
-              currentPage: that.$parent.child.currentPage,
-              pageSize: that.$parent.child.pageSize,
+              userId: this.userId,
+              page: that.$parent.child.currentPage,
+              size: that.$parent.child.pageSize,
             }
           }).then(res => {
                 if (res.data.code === 1001) {
-                  that.$parent.child.total = res.data.data.total
+                  that.$parent.child.total = res.data.data.totalElements
                   let tableData = []
                   res.data.data.data.forEach(s => {
                     let {coinKind, transHash, fromAddress, toAddress, unusualCount, unusualTime} = s
                     unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+                    coinKind = that.coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                    unusualCount = unusualCount.replace(/^\"|\"$/g, '')
                     const addrMonitor = new this.TransMonitorVO(coinKind, transHash, fromAddress, toAddress, unusualCount, unusualTime)
                     tableData.push(addrMonitor)
                   })

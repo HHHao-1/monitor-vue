@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import MonitorAddr from "@/views/monitor";
+import Monitor from "@/views/monitor";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'MonitorAddr',
-    component: MonitorAddr,
+    name: 'Monitor',
+    component: Monitor,
     meta: {title: '数字货币监控系统'},
   }
 ]
