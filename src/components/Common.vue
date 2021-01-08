@@ -78,6 +78,7 @@ export default {
           this.$parent.value1 = ''
           this.$parent.value2 = ''
           this.$parent.checkGroup = []
+          this.$parent.coinKindSelect = []
           break
         case 2:
           this.tabFlag[0] = true
@@ -99,6 +100,8 @@ export default {
           this.table(2)
           this.$parent.value1 = ''
           this.$parent.value2 = ''
+          this.$parent.checkGroup = []
+          this.$parent.coinKindSelect = []
           break
         case 3:
           this.tabFlag[4] = false
@@ -120,6 +123,8 @@ export default {
           }
           this.$parent.value1 = ''
           this.$parent.value2 = ''
+          this.$parent.checkGroup = []
+          this.$parent.coinKindSelect = []
           break
         case 4:
           this.tabFlag[4] = true
@@ -141,6 +146,8 @@ export default {
           }
           this.$parent.value1 = ''
           this.$parent.value2 = ''
+          this.$parent.checkGroup = []
+          this.$parent.coinKindSelect = []
           break
       }
     },
@@ -180,7 +187,10 @@ export default {
                   res.data.data.content.forEach(s => {
                     let {eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime} = s
                     unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-                    coinKind = that.coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                    try {
+                      coinKind = that.coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                    } catch (e) {
+                    }
                     unusualCount = unusualCount.replace(/^\"|\"$/g, '')
                     const addrMonitor = new this.AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
                     tableData.push(addrMonitor)
@@ -199,17 +209,20 @@ export default {
           axios.get('/monitor/user-api/monitor-trans', {
             params: {
               userId: this.userId,
-              page: that.$parent.child.currentPage,
+              page: that.$parent.child.currentPage - 1,
               size: that.$parent.child.pageSize,
             }
           }).then(res => {
                 if (res.data.code === 1001) {
                   that.$parent.child.total = res.data.data.totalElements
                   let tableData = []
-                  res.data.data.data.forEach(s => {
+                  res.data.data.content.forEach(s => {
                     let {coinKind, transHash, fromAddress, toAddress, unusualCount, unusualTime} = s
                     unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-                    coinKind = that.coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                    try {
+                      coinKind = that.coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                    } catch (e) {
+                    }
                     unusualCount = unusualCount.replace(/^\"|\"$/g, '')
                     const addrMonitor = new this.TransMonitorVO(coinKind, transHash, fromAddress, toAddress, unusualCount, unusualTime)
                     tableData.push(addrMonitor)
@@ -225,22 +238,22 @@ export default {
               });
           break
         case 2:
-          axios.get('/monitor/user-api/addr-rules', {
+          axios.get('/monitor/user-api/events', {
             params: {
-              id: this.userId,
-              currentPage: that.$parent.child.currentPage,
-              pageSize: that.$parent.child.pageSize,
+              userId: this.userId,
+              page: that.$parent.child.currentPage - 1,
+              size: that.$parent.child.pageSize,
             }
           }).then(res => {
                 if (res.data.code === 1001) {
-                  that.$parent.child.total = res.data.data.total
+                  that.$parent.child.total = res.data.data.totalElements
                   let tableData = []
                   let num = []
-                  for (let i = 1; i <= res.data.data.total; i++) {
+                  for (let i = 1; i <= res.data.data.totalElements; i++) {
                     num[i] = i
                   }
                   let flag = 1
-                  res.data.data.data.forEach(s => {
+                  res.data.data.content.forEach(s => {
                     let noticeWay = ''
                     switch (s.noticeWay) {
                       case 0:
@@ -332,6 +345,10 @@ export default {
                     let createTime = s.eventAddTime
                     let uid = s.id
                     createTime = moment(createTime).format('YYYY-MM-DD HH:mm:ss');
+                    try {
+                      coinKind = that.coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                    } catch (e) {
+                    }
                     const addrMonitor = new this.TransVO(id, coinKind, monitorMinVal, noticeWay, createTime, uid)
                     tableData.push(addrMonitor)
                   })

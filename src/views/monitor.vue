@@ -51,7 +51,7 @@
               <template slot="header" slot-scope="scope">
                 <el-popover
                     placement='bottom-start'
-                    width="65"
+                    width="100"
                     trigger='click'
                     class="el-pop-width"
                     :ref="`popover-${scope.$index}`"
@@ -192,12 +192,13 @@
                 -
                 <el-input v-model="addr.addInfo.miniValue[index]" placeholder="请输入监控阈值" max="100"
                           style="width: 140px;height: 34px"></el-input>
-                <el-button v-show="isAdd" class="sub" @click="addrSub(index)" icon="el-icon-remove-outline"
+                <!--                <el-button v-show="isAdd" class="sub" @click="addrSub(index)" icon="el-icon-remove-outline"-->
+                <!--                           circle></el-button>-->
+                <el-button class="sub" @click="addrSub(index)" icon="el-icon-remove-outline"
                            circle></el-button>
               </div>
-              <el-button v-show="isAdd" class="plus" circle
-                         @click="addrAdd++">+ 添加
-              </el-button>
+              <!--              <el-button v-show="isAdd" class="plus" circle @click="addrAdd++">+ 添加</el-button>-->
+              <el-button v-show="isAdd" class="plus" circle @click="addrAdd++">+ 添加</el-button>
             </div>
 
             <span slot="footer" class="dialog-footer">
@@ -252,6 +253,7 @@
           </el-dialog>
           <div class="page">
             <el-pagination
+                :current-page.sync="child.currentPage"
                 background
                 layout="prev, pager, next"
                 :total='child.total'
@@ -293,6 +295,7 @@ export default {
         total: 0,
       },
       checkGroup: [],
+      coinKindSelect: [],
       centerDialogVisible1: false,
       centerDialogVisible2: false,
       dialogVisible: false,
@@ -380,7 +383,7 @@ export default {
       this.empty()
       if (!this.isTrans) {
         this.cancel()
-        this.addrTitle = '添加地址异动监控'
+        this.addrTitle = '添加监控事件'
         this.dialogVisible = true
         this.isAdd = true
       } else {
@@ -491,7 +494,13 @@ export default {
           break
       }
       if (this.isAdd) {
-        let transRule = new this.TransRule(null, this.$children[0].userId, this.value[0], noticeWay, this.trans.miniValue)
+        let coinKind
+        try {
+          coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === this.value[0])[0].coinName
+        } catch (e) {
+          coinKind = this.value[0]
+        }
+        let transRule = new this.TransRule(null, this.$children[0].userId, coinKind, noticeWay, this.trans.miniValue)
         axios.post('/monitor/user-api/trans-rules', JSON.stringify([transRule]), {
           headers: {"Content-Type": "application/json"}
         }).then(res => {
@@ -503,7 +512,13 @@ export default {
           that.$message.error('请求失败');
         });
       } else {
-        let transRule2 = new this.TransRule(this.currentUid, this.$children[0].userId, this.value[0], noticeWay, this.trans.miniValue)
+        let coinKind
+        try {
+          coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === this.value[0])[0].coinName
+        } catch (e) {
+          coinKind = this.value[0]
+        }
+        let transRule2 = new this.TransRule(this.currentUid, this.$children[0].userId, coinKind, noticeWay, this.trans.miniValue)
         axios.put('/monitor/user-api/trans-rules', JSON.stringify([transRule2]), {
           headers: {"Content-Type": "application/json"}
         }).then(res => {
@@ -573,7 +588,7 @@ export default {
       this.empty()
       this.dialogVisible = true
       this.isAdd = false
-      this.addrTitle = '编辑地址异动监控'
+      this.addrTitle = '编辑监控事件'
       this.currentUid = row.uid
       let coinK = []
       this.coinKind.forEach(s => {
@@ -585,21 +600,22 @@ export default {
       })
       this.options = coinK
       const that = this
-      axios.get('/monitor/user-api/addr-rules/id', {
+      axios.get('/monitor/user-api/events/rules', {
         params: {
-          id: row.uid
+          eventId: row.uid
         }
       }).then(res => {
         if (res.data.code === 1001) {
-          let {eventName, coinKind, address, noticeWay, monitorMinVal, addressMark} =
-              res.data.data
+          // res.data.data.forEach(s=>{
+          //   let {eventName, coinKind, address, noticeWay, monitorMinVal, addressMark} =
+          // })
           this.addr = {
-            event: eventName,
-            addInfo: {
-              address: [address],
-              mark: [addressMark],
-              miniValue: [monitorMinVal],
-            }
+            event: row.eventName,
+            // addInfo: {
+            //   address: [address],
+            //   mark: [addressMark],
+            //   miniValue: [monitorMinVal],
+            // }
           }
           switch (noticeWay) {
             case 0:
@@ -608,9 +624,27 @@ export default {
             case 1:
               that.checkList = ['邮件']
               break
+            case 2:
+              that.checkList = []
+              break
             case 3:
               that.checkList = ['短信', '邮件']
               break
+            case 4:
+              that.checkList = ['短信']
+              break
+            case 5:
+              that.checkList = ['邮件']
+              break
+            case 6:
+              that.checkList = ['短信', '邮件']
+              break
+            default:
+              that.checkList = []
+          }
+          try {
+            coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+          } catch (e) {
           }
           this.value = [coinKind]
         }
@@ -655,9 +689,27 @@ export default {
             case 1:
               that.checkList = ['邮件']
               break
+            case 2:
+              that.checkList = []
+              break
             case 3:
               that.checkList = ['短信', '邮件']
               break
+            case 4:
+              that.checkList = ['短信']
+              break
+            case 5:
+              that.checkList = ['邮件']
+              break
+            case 6:
+              that.checkList = ['短信', '邮件']
+              break
+            default:
+              that.checkList = []
+          }
+          try {
+            coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+          } catch (e) {
           }
           this.value = [coinKind]
         }
@@ -713,6 +765,7 @@ export default {
     ,
     coinKindFilter(scope) {
       const that = this;
+      this.child.currentPage = 1
       if (this.monitorKind === 0) {
         if (this.checkGroup.length === 0) {
           scope._self.$refs[`popover-${scope.$index}`].doClose()
@@ -722,46 +775,15 @@ export default {
         scope._self.$refs[`popover-${scope.$index}`].doClose()
         let coin = []
         this.checkGroup.forEach(s => {
-          let coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
+          try {
+            let coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
+          } catch (e) {
+          }
           coin.push(coinKind)
         })
-        this.checkGroup = coin
-        this.pageDate()
-        // axios.get('/monitor/user-api/monitor-addr', {
-        //   params: {
-        //     userId: this.$children[0].userId,
-        //     page: this.child.currentPage - 1,
-        //     size: this.child.pageSize,
-        //     coinKinds: coin
-        //   }, paramsSerializer: params => {
-        //     return qs.stringify(params, {indices: false})
-        //   }
-        // }).then(res => {
-        //   if (res.data.code === 1001) {
-        //     that.child.total = res.data.data.totalElements
-        //     let tableData = []
-        //     res.data.data.content.forEach(s => {
-        //       let {
-        //         eventName,
-        //         coinKind,
-        //         address,
-        //         addressMark,
-        //         transHash,
-        //         unusualCount,
-        //         unusualTime
-        //       } = s
-        //       unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-        //       coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
-        //       unusualCount = unusualCount.replace(/^\"|\"$/g, '')
-        //       const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
-        //       tableData.push(addrMonitor)
-        //     })
-        //     that.tableData = tableData
-        //   }
-        // }).catch(function (error) {
-        //   console.log(error);
-        //   that.$message.error('请求失败');
-        // });
+        this.coinKindSelect = coin
+        this.child.currentPage = 1
+        this.pageDate(this.monitorKind)
       }
 
       if (this.monitorKind === 1) {
@@ -773,46 +795,14 @@ export default {
         scope._self.$refs[`popover-${scope.$index}`].doClose()
         let coin = []
         this.checkGroup.forEach(s => {
-          let coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
+          try {
+            let coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
+          } catch (e) {
+          }
           coin.push(coinKind)
         })
-        this.checkGroup = coin
-        axios.get('/monitor/user-api/monitor-addr', {
-          params: {
-            userId: this.$children[0].userId,
-            page: this.child.currentPage - 1,
-            size: this.child.pageSize,
-            coinKinds: this.checkGroup
-          }, paramsSerializer: params => {
-            return qs.stringify(params, {indices: false})
-          }
-        }).then(res => {
-              if (res.data.code === 1001) {
-                that.child.total = res.data.data.totalElements
-                let tableData = []
-                res.data.data.content.forEach(s => {
-                  let {
-                    eventName,
-                    coinKind,
-                    address,
-                    addressMark,
-                    transHash,
-                    unusualCount,
-                    unusualTime
-                  } = s
-                  unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-                  coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
-                  unusualCount = unusualCount.replace(/^\"|\"$/g, '')
-                  const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
-                  tableData.push(addrMonitor)
-                })
-                that.tableData = tableData
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-              that.$message.error('请求失败');
-            });
+        this.coinKindSelect = coin
+        this.pageDate(this.monitorKind)
       }
     }
     ,
@@ -967,97 +957,28 @@ export default {
     ,
     renderEvent() {
       const that = this;
+      this.child.currentPage = 1
       this.visible1 = !this.visible1
       let inputValue = that.value1 || 'blank'
       if (inputValue !== 'blank') {
-        that.pageDate()
-        // axios.get('/monitor/user-api/monitor-addr', {
-        //   params: {
-        //     userId: that.$children[0].userId,
-        //     page: this.child.currentPage - 1,
-        //     size: this.child.pageSize,
-        //     eventName: that.value1,
-        //   }, paramsSerializer: params => {
-        //     return qs.stringify(params, {indices: false})
-        //   }
-        // }).then(res => {
-        //       if (res.data.code === 1001) {
-        //         that.child.total = res.data.data.totalElements
-        //         let tableData = []
-        //         res.data.data.content.forEach(s => {
-        //           let {
-        //             eventName,
-        //             coinKind,
-        //             address,
-        //             addressMark,
-        //             transHash,
-        //             unusualCount,
-        //             unusualTime
-        //           } = s
-        //           unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-        //           coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
-        //           unusualCount = unusualCount.replace(/^\"|\"$/g, '')
-        //           const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
-        //           tableData.push(addrMonitor)
-        //         })
-        //         that.tableData = tableData
-        //       }
-        //     })
-        //     .catch(function (error) {
-        //       console.log(error);
-        //       that.$message.error('请求失败');
-        //     });
+        that.pageDate(this.monitorKind)
       } else {
         this.$children[0].table(0)
       }
-    },
+    }
+    ,
     renderMark() {
       const that = this;
+      this.child.currentPage = 1
       this.visible2 = !this.visible2
       let inputValue = this.value2 || 'blank'
       if (inputValue !== 'blank') {
-        that.pageDate()
-        // const that = this;
-        // axios.get('/monitor/user-api/monitor-addr', {
-        //   params: {
-        //     userId: this.$children[0].userId,
-        //     page: this.child.currentPage - 1,
-        //     size: this.child.pageSize,
-        //     addressMark: this.value2
-        //   }, paramsSerializer: params => {
-        //     return qs.stringify(params, {indices: false})
-        //   }
-        // }).then(res => {
-        //       if (res.data.code === 1001) {
-        //         that.child.total = res.data.data.totalElements
-        //         let tableData = []
-        //         res.data.data.content.forEach(s => {
-        //           let {
-        //             eventName,
-        //             coinKind,
-        //             address,
-        //             addressMark,
-        //             transHash,
-        //             unusualCount,
-        //             unusualTime
-        //           } = s
-        //           unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-        //           coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
-        //           unusualCount = unusualCount.replace(/^\"|\"$/g, '')
-        //           const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
-        //           tableData.push(addrMonitor)
-        //         })
-        //         that.tableData = tableData
-        //       }
-        //     })
-        //     .catch(function (error) {
-        //       console.log(error);
-        //       that.$message.error('请求失败');
-        //     });
+        that.pageDate(this.monitorKind)
       } else {
         this.$children[0].table(0)
       }
     },
+
     handleCurrentChange(val) {
       this.child.currentPage = val
       this.pageDate(this.monitorKind)
@@ -1075,15 +996,30 @@ export default {
     },
     pageDate(val) {
       let that = this
-      axios.get('/monitor/user-api/monitor-addr', {
-        params: {
+      let url = ''
+      let params = {}
+      if (val === 0) {
+        params = {
           userId: this.$children[0].userId,
           page: this.child.currentPage - 1,
           size: this.child.pageSize,
           eventName: this.value1 || null,
           addressMark: this.value2 || null,
-          coinKinds: this.checkGroup.length !== 0 ? this.checkGroup : null
+          coinKinds: this.coinKindSelect.length !== 0 ? this.coinKindSelect : null
         }
+        url = '/monitor/user-api/monitor-addr'
+      }
+      if (val === 1) {
+        params = {
+          userId: this.$children[0].userId,
+          page: this.child.currentPage - 1,
+          size: this.child.pageSize,
+          coinKinds: this.coinKindSelect.length !== 0 ? this.coinKindSelect : null
+        }
+        url = '/monitor/user-api/monitor-trans'
+      }
+      axios.get(url, {
+        params: params
         , paramsSerializer: params => {
           return qs.stringify(params, {indices: false})
         }
@@ -1092,11 +1028,28 @@ export default {
               that.child.total = res.data.data.totalElements
               let tableData = []
               res.data.data.content.forEach(s => {
-                let {eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime} = s
-                unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
-                coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
-                unusualCount = unusualCount.replace(/^\"|\"$/g, '')
-                const addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
+                let addrMonitor
+                if (val === 0) {
+                  let {eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime} = s
+                  unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+                  try {
+                    coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                  } catch (e) {
+                  }
+                  unusualCount = unusualCount.replace(/^\"|\"$/g, '')
+                  addrMonitor = new this.$children[0].AddrMonitorVO(eventName, coinKind, address, addressMark, transHash, unusualCount, unusualTime)
+                }
+                if (val === 1) {
+                  let {coinKind, transHash, fromAddress, toAddress, unusualCount, unusualTime} = s
+                  unusualTime = moment(unusualTime).format('YYYY-MM-DD HH:mm:ss');
+                  try {
+                    coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+                  } catch (e) {
+                  }
+                  unusualCount = unusualCount.replace(/^\"|\"$/g, '')
+                  addrMonitor = new this.$children[0].TransMonitorVO(coinKind, transHash, fromAddress, toAddress, unusualCount, unusualTime)
+                }
+
                 tableData.push(addrMonitor)
               })
               that.tableData = tableData
