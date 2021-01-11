@@ -55,6 +55,17 @@ export default {
     this.getUserName()
     // this.table(0)
   },
+  watch: {
+    userId: {
+      handler(newVal, oldVal) {
+        let tem = newVal || 'blank'
+        if (tem !== 'blank') {
+          this.getUserName()
+          console.log(this.userName)
+        }
+      }
+    }
+  },
   methods: {
     getUserName() {
       const that = this;
