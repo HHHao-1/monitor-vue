@@ -881,9 +881,10 @@ export default {
         }
         scope._self.$refs[`popover-${scope.$index}`].doClose()
         let coin = []
+        let coinKind
         this.checkGroup.forEach(s => {
           try {
-            let coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
+            coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
           } catch (e) {
           }
           coin.push(coinKind)
@@ -901,9 +902,10 @@ export default {
         }
         scope._self.$refs[`popover-${scope.$index}`].doClose()
         let coin = []
+        let coinKind
         this.checkGroup.forEach(s => {
           try {
-            let coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
+            coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
           } catch (e) {
           }
           coin.push(coinKind)
