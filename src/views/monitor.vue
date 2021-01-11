@@ -595,7 +595,7 @@ export default {
       if (this.isAdd) {
         let coinKind
         try {
-          coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === this.value[0])[0].coinName
+          coinKind = that.$children[0].coinSearch.filter(x => x.coinName === this.value[0])[0].contractAddr
         } catch (e) {
           coinKind = this.value[0]
         }
@@ -613,7 +613,7 @@ export default {
       } else {
         let coinKind
         try {
-          coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === this.value[0])[0].coinName
+          coinKind = that.$children[0].coinSearch.filter(x => x.coinName === this.value[0])[0].contractAddr
         } catch (e) {
           coinKind = this.value[0]
         }
@@ -883,6 +883,7 @@ export default {
         let coin = []
         let coinKind
         this.checkGroup.forEach(s => {
+          Math.floor
           try {
             coinKind = that.$children[0].coinSearch.filter(x => x.coinName === s)[0].contractAddr
           } catch (e) {

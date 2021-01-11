@@ -61,7 +61,6 @@ export default {
         let tem = newVal || 'blank'
         if (tem !== 'blank') {
           this.getUserName()
-          console.log(this.userName)
         }
       }
     }
@@ -72,6 +71,7 @@ export default {
       axios.get('/monitor/user-api/users?userId=' + this.userId).then(res => {
             if (res.data.code === 1001) {
               that.userName = res.data.data.name
+              console.log(this.userName)
             }
           })
           .catch(function (error) {
