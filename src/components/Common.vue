@@ -306,7 +306,7 @@ export default {
                     let id = (that.$parent.child.currentPage - 1) * that.$parent.child.pageSize + num[flag]
                     ++flag
                     let eventName = s.eventName
-                    let createTime = s.eventAddTime
+                    let createTime = s.createTime
                     let uid = s.id
                     createTime = moment(createTime).format('YYYY-MM-DD HH:mm:ss');
                     const addrMonitor = new this.AddrVO(id, eventName, noticeWay, createTime, uid)
