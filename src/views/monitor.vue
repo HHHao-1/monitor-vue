@@ -336,11 +336,12 @@ export default {
     addrCheckoutSure() {
       if (this.checkList.length === 0) {
         this.$message.warning('未填写通知方式')
-        return
-      }
-      if (this.addr.event === '') {
+      } else if (this.addr.event === '') {
         this.$message.warning('未填写监控事件')
-        return
+      } else if (this.addr.addInfo.address.length === 0) {
+        this.$message.warning('未填写监控地址')
+      } else if (this.value.length === 0) {
+        this.$message.warning('未填写监控币种')
       }
       // if (this.value.length === 0) {
       //   this.$message.warning('未填写监控币种')
@@ -355,12 +356,10 @@ export default {
     transCheckoutSure() {
       if (this.checkList.length === 0) {
         this.$message.warning('未填写通知方式')
-      }
-      if (this.value.length === 0) {
+      } else if (this.value.length === 0) {
         this.$message.warning('未填写监控币种')
-      }
-      if (this.trans.miniValue === '') {
-        this.$message.warning('未填写监控监控阈值')
+      } else if (this.trans.miniValue === '') {
+        this.$message.warning('未填写监控阈值')
       }
     }
     ,
@@ -415,10 +414,19 @@ export default {
     ,
     editorAddr() {
       const that = this
-      if (this.addr.event === '') {
-        this.addrCheckoutSure()
-        return
+      for (let i = 0; i < this.addr.addInfo.miniValue.length; i++) {
+        if (this.addr.addInfo.miniValue[i].search(/[^\d.]/g) !== -1) {
+          that.$message.warning('监控阈值只能为数值')
+          return
+        }
       }
+
+      if (this.checkList.length === 0 || this.addr.event === '' || this.addr.addInfo.address.length === 0 || this.value.length === 0) {
+        this.addrCheckoutSure()
+        return;
+      }
+
+
       // if (this.value.length === 0 || this.addr.addInfo.address.length === 0) {
       //   this.$message.warning('请选择币种、输入地址');
       //   return
@@ -571,7 +579,11 @@ export default {
     ,
     editorTrans() {
       const that = this
-      if (this.checkList.length === 0 || this.value.length === 0 || this.trans.miniValue === 0) {
+      if (this.trans.miniValue.search(/[^\d.]/g) !== -1) {
+        this.$message.warning('监控阈值只能为数值')
+        return
+      }
+      if (this.checkList.length === 0 || this.value.length === 0 || this.trans.miniValue === '') {
         this.transCheckoutSure()
         return
       }
