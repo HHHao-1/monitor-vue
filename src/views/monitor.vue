@@ -101,7 +101,7 @@
                   <span>确认删除？</span>
                   <span slot="footer" class="dialog-footer">
                     <div style="display: flex;">
-                    <el-button type="primary" @click="del(0)">确 定</el-button>
+                    <el-button type="primary" @click="del(0,scope.row)">确 定</el-button>
                   <el-button @click="centerDialogVisible1 = false">取 消</el-button>
                     </div>
                   </span>
@@ -180,25 +180,19 @@
                   </el-option>
                 </el-select>
                 -
-                <el-input v-show="isAdd" class="pcolor" v-model="addr.addInfo.address[index]" placeholder="请输入地址"
-                          max="100"
-                          style="width: 180px;height: 34px"></el-input>
-                <el-input v-show="!isAdd" class="pcolor" v-model="addr.addInfo.address[index]" placeholder="请输入地址"
-                          max="100"
-                          style="width: 210px;height: 34px"></el-input>
+                <el-input class="pcolor" v-model="addr.addInfo.address[index]" placeholder="请输入地址"
+                          max="100" style="width: 180px;height: 34px"></el-input>
                 -
                 <el-input v-model="addr.addInfo.mark[index]" placeholder="请输入地址标注" max="100"
                           style="width: 140px;height: 34px"></el-input>
                 -
                 <el-input v-model="addr.addInfo.miniValue[index]" placeholder="请输入监控阈值" max="100"
                           style="width: 140px;height: 34px"></el-input>
-                <!--                <el-button v-show="isAdd" class="sub" @click="addrSub(index)" icon="el-icon-remove-outline"-->
-                <!--                           circle></el-button>-->
                 <el-button class="sub" @click="addrSub(index)" icon="el-icon-remove-outline"
                            circle></el-button>
               </div>
-              <!--              <el-button v-show="isAdd" class="plus" circle @click="addrAdd++">+ 添加</el-button>-->
-              <el-button v-show="isAdd" class="plus" circle @click="addrAdd++">+ 添加</el-button>
+              <el-button class="plus" circle @click="addrAddFunc">+ 添加
+              </el-button>
             </div>
 
             <span slot="footer" class="dialog-footer">
@@ -282,6 +276,7 @@ export default {
   name: "monitor",
   data() {
     return {
+      countAdd: 0,
       monitorKind: 0,
       tableData: [],
       value1: '',
@@ -325,26 +320,36 @@ export default {
       addrTitle: '',
       transTitle: '',
       judgePage: 0,
+      eventArray: [],
+      scopeRowId: 0,
+      scopeRowRules: [],
+      toDeleteAddrRuleIds: [],
+      totoDeleteAddrIds: [],
     }
   },
   methods: {
+    addrAddFunc() {
+      this.addrAdd++
+      this.countAdd++
+    }
+    ,
     addrCheckoutSure() {
       if (this.checkList.length === 0) {
-        this.$message.warning('通知方式')
+        this.$message.warning('未填写通知方式')
         return
       }
       if (this.addr.event === '') {
         this.$message.warning('未填写监控事件')
         return
       }
-      if (this.value.length === 0) {
-        this.$message.warning('未填写监控币种')
-        return
-      }
-      if (this.addr.addInfo.address.length === 0) {
-        this.$message.warning('未填写监控地址')
-        return
-      }
+      // if (this.value.length === 0) {
+      //   this.$message.warning('未填写监控币种')
+      //   return
+      // }
+      // if (this.addr.addInfo.address.length === 0) {
+      //   this.$message.warning('未填写监控地址')
+      //   return
+      // }
     }
     ,
     transCheckoutSure() {
@@ -361,10 +366,15 @@ export default {
     ,
     addrSub(index) {
       this.addrAdd--
+      if (this.addrAdd === 0) {
+        this.addrAdd = 1
+      }
       this.value.splice(index, 1)
       this.addr.addInfo.address.splice(index, 1)
       this.addr.addInfo.mark.splice(index, 1)
       this.addr.addInfo.miniValue.splice(index, 1)
+      this.totoDeleteAddrIds.push(index)
+      this.toDeleteAddrRuleIds.push(this.scopeRowRules[index].id)
     }
     ,
     delook(row) {
@@ -405,7 +415,7 @@ export default {
     ,
     editorAddr() {
       const that = this
-      if (this.addr.event === '' || this.value.length === 0 || this.addr.addInfo.address.length === 0) {
+      if (this.addr.event === '') {
         this.addrCheckoutSure()
         return
       }
@@ -427,14 +437,37 @@ export default {
           break
       }
       if (this.isAdd) {
-        let list = []
-        for (let i = 0; i < this.addrAdd; i++) {
-          let addrRule = new this.AddrRule(null, this.$children[0].userId, this.addr.event, this.value[i], this.addr.addInfo.address[i], noticeWay, this.addr.addInfo.miniValue[i], this.addr.addInfo.mark[i])
-          list.push(addrRule)
+        let eventArray = {
+          eventName: this.addr.event,
+          noticeWay: noticeWay,
+          userName: this.$children[0].userName,
+          userId: this.$children[0].userId,
+          state: 1,
         }
-        axios.post('/monitor/user-api/addr-rules', JSON.stringify(list), {
+        let addrRulesAdd = []
+        for (let i = 0; i < this.addrAdd; i++) {
+          let addrRule = {
+            coinKind: this.value[i],
+            address: this.addr.addInfo.address[i],
+            addressMark: this.addr.addInfo.mark[i],
+            monitorMinVal: this.addr.addInfo.miniValue[i],
+            eventName: this.addr.event,
+            noticeWay: noticeWay,
+            userId: this.$children[0].userId,
+            state: 1,
+          }
+          addrRulesAdd.push(addrRule)
+        }
+
+        let addrRule2 = {
+          event: eventArray,
+          addrRules: addrRulesAdd,
+          toDeleteAddrRuleIds: this.toDeleteAddrRuleIds
+        }
+        axios.post('/monitor/user-api/events', JSON.stringify(addrRule2), {
           headers: {"Content-Type": "application/json"}
         }).then(res => {
+          console.log(res)
           if (res.data.code === 1001) {
             that.$children[0].table(2)
           }
@@ -442,9 +475,72 @@ export default {
           console.log(error);
           that.$message.error('请求失败');
         });
+
+
+        // let list = []
+        // for (let i = 0; i < this.addrAdd; i++) {
+        //   let addrRule = new this.AddrRule(null, this.$children[0].userId, this.addr.event, this.value[i], this.addr.addInfo.address[i], noticeWay, this.addr.addInfo.miniValue[i], this.addr.addInfo.mark[i])
+        //   list.push(addrRule)
+        // }
+        // axios.post('/monitor/user-api/addr-rules', JSON.stringify(list), {
+        //   headers: {"Content-Type": "application/json"}
+        // }).then(res => {
+        //   if (res.data.code === 1001) {
+        //     that.$children[0].table(2)
+        //   }
+        // }).catch(function (error) {
+        //   console.log(error);
+        //   that.$message.error('请求失败');
+        // });
       } else {
-        let addrRule2 = new this.AddrRule(this.currentUid, this.$children[0].userId, this.addr.event, this.value[0], this.addr.addInfo.address[0], noticeWay, this.addr.addInfo.miniValue[0], this.addr.addInfo.mark[0])
-        axios.put('/monitor/user-api/addr-rules', JSON.stringify([addrRule2]), {
+        for (let i = 0; i < this.addrAdd; i++) {
+          let flag1 = that.value[i] || 'blank'
+          let flag2 = that.addr.addInfo.address[i] || 'blank'
+          if (flag1 === 'blank' || flag2 === 'blank') {
+            this.$message.error('监控币种、监控地址不能为空')
+            return
+          }
+        }
+        let index = 0
+        let addrRulesMap = this.scopeRowRules
+        for (let i = 0; i < this.countAdd; i++) {
+          addrRulesMap.push({})
+        }
+        this.totoDeleteAddrIds.forEach(s => {
+          addrRulesMap.splice(s, 1)
+        })
+        for (let i = 0; i < addrRulesMap.length; i++) {
+          addrRulesMap[i].address = that.addr.addInfo.address[i]
+          addrRulesMap[i].monitorMinVal = that.addr.addInfo.miniValue[i]
+          addrRulesMap[i].addressMark = that.addr.addInfo.mark[i]
+          let coinKind
+          try {
+            coinKind = that.$children[0].coinSearch.filter(x => x.coinName === that.value[i])[0].contractAddr
+          } catch (e) {
+          }
+          addrRulesMap[i].coinKind = coinKind
+
+        }
+        let eventArray = this.eventArray[this.scopeRowId - 1]
+        delete eventArray.createTime
+        delete eventArray.updateTime
+
+        // let addrRulesMap = this.scopeRowRules.map(s => {
+        //   if ((that.value.length - 1) >= index) {
+        //     s.address = that.addr.addInfo.address[index]
+        //     s.monitorMinVal = that.addr.addInfo.miniValue[index]
+        //     s.addressMark = that.addr.addInfo.mark[index]
+        //     s.acoinKind = that.value[index]
+        //     index++
+        //   }
+        // })
+        let addrRule2 = {
+          event: eventArray,
+          addrRules: addrRulesMap,
+          toDeleteAddrRuleIds: this.toDeleteAddrRuleIds
+        }
+        // let addrRule2 = new this.AddrRule(this.currentUid, this.$children[0].userId, this.addr.event, this.value[0], this.addr.addInfo.address[0], noticeWay, this.addr.addInfo.miniValue[0], this.addr.addInfo.mark[0])
+        axios.put('/monitor/user-api/events', JSON.stringify(addrRule2), {
           headers: {"Content-Type": "application/json"}
         }).then(res => {
           console.log(res)
@@ -468,6 +564,9 @@ export default {
               miniValue: []
             }
       }
+      this.totoDeleteAddrIds = []
+      this.toDeleteAddrRuleIds = []
+      this.countAdd = 0
     }
     ,
     editorTrans() {
@@ -552,6 +651,8 @@ export default {
             }
       }
       this.addrAdd = 1
+      this.totoDeleteAddrIds = []
+      this.countAdd = 0
     }
     ,
     empty() {
@@ -585,6 +686,7 @@ export default {
     }
     ,
     addrEdit(row) {
+      const that = this
       this.empty()
       this.dialogVisible = true
       this.isAdd = false
@@ -599,54 +701,54 @@ export default {
         coinK.push(item)
       })
       this.options = coinK
-      const that = this
+      this.addr.event = row.eventName
+      let notice = row.noticeWay.split('、')
+      this.checkList = notice
       axios.get('/monitor/user-api/events/rules', {
         params: {
           eventId: row.uid
         }
       }).then(res => {
+        this.scopeRowId = row.id
         if (res.data.code === 1001) {
-          // res.data.data.forEach(s=>{
-          //   let {eventName, coinKind, address, noticeWay, monitorMinVal, addressMark} =
-          // })
-          this.addr = {
-            event: row.eventName,
-            // addInfo: {
-            //   address: [address],
-            //   mark: [addressMark],
-            //   miniValue: [monitorMinVal],
-            // }
-          }
-          switch (noticeWay) {
-            case 0:
-              that.checkList = ['短信']
-              break
-            case 1:
-              that.checkList = ['邮件']
-              break
-            case 2:
-              that.checkList = []
-              break
-            case 3:
-              that.checkList = ['短信', '邮件']
-              break
-            case 4:
-              that.checkList = ['短信']
-              break
-            case 5:
-              that.checkList = ['邮件']
-              break
-            case 6:
-              that.checkList = ['短信', '邮件']
-              break
-            default:
-              that.checkList = []
-          }
-          try {
-            coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
-          } catch (e) {
-          }
-          this.value = [coinKind]
+          this.addrAdd = res.data.data.length
+          this.scopeRowRules = res.data.data
+          res.data.data.forEach(s => {
+            let {coinKind, address, monitorMinVal, addressMark} = s
+            this.addr.addInfo.address.push(address)
+            this.addr.addInfo.mark.push(addressMark)
+            this.addr.addInfo.miniValue.push(monitorMinVal)
+            try {
+              coinKind = that.$children[0].coinSearch.filter(x => x.contractAddr === coinKind)[0].coinName
+            } catch (e) {
+            }
+            this.value.push(coinKind)
+          })
+          // switch (noticeWay) {
+          //   case 0:
+          //     that.checkList = ['短信']
+          //     break
+          //   case 1:
+          //     that.checkList = ['邮件']
+          //     break
+          //   case 2:
+          //     that.checkList = []
+          //     break
+          //   case 3:
+          //     that.checkList = ['短信', '邮件']
+          //     break
+          //   case 4:
+          //     that.checkList = ['短信']
+          //     break
+          //   case 5:
+          //     that.checkList = ['邮件']
+          //     break
+          //   case 6:
+          //     that.checkList = ['短信', '邮件']
+          //     break
+          //   default:
+          //     that.checkList = []
+          // }
         }
       }).catch(function (error) {
         console.log(error);
@@ -720,14 +822,19 @@ export default {
       this.centerDialogVisible1 = false
     }
     ,
-    del(index) {
+    del(index, row) {
       const that = this
       switch (index) {
         case 0:
-          axios.delete('/monitor/user-api/addr-rules', {
-            params: {
-              id: this.currentUid
-            }
+          let eventData = {
+            id: row.uid,
+            eventName: row.eventName,
+            userName: this.$children[0].userName,
+            userId: this.$children[0].userId,
+            state: 0,
+          }
+          axios.put('/monitor/user-api/events/state', JSON.stringify(eventData), {
+            headers: {"Content-Type": "application/json"}
           }).then(res => {
             if (res.data.code === 1001) {
               if (this.judgePage === this.child.pageSize + 1) {
@@ -977,7 +1084,8 @@ export default {
       } else {
         this.$children[0].table(0)
       }
-    },
+    }
+    ,
 
     handleCurrentChange(val) {
       this.child.currentPage = val
@@ -993,7 +1101,8 @@ export default {
     handleNextChange(val) {
       this.child.currentPage = val
       this.pageDate(this.monitorKind)
-    },
+    }
+    ,
     pageDate(val) {
       let that = this
       let url = ''
@@ -1081,6 +1190,7 @@ export default {
       this.noticeWay = noticeWay
       this.monitorMinVal = monitorMinVal
     }
+
   }
 }
 </script>
@@ -1216,6 +1326,4 @@ export default {
   background-color: rgba(255, 255, 255, 0);
   margin: 5px 0 0 70px;
 }
-
-
 </style>

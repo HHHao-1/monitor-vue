@@ -253,6 +253,7 @@ export default {
                     num[i] = i
                   }
                   let flag = 1
+                  that.$parent.eventArray = res.data.data.content
                   res.data.data.content.forEach(s => {
                     let noticeWay = ''
                     switch (s.noticeWay) {
