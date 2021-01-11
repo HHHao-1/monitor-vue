@@ -43,7 +43,7 @@ export default {
         login: '/login'
       },
       userId: 2,
-      userName: 'Admin',
+      userName: '',
       tabOneLevel: 0,
       tabFlag: {0: true, 1: false, 2: true, 3: false, 4: true, 5: false, 6: true, 7: false},
       coinSearch: []
@@ -52,9 +52,22 @@ export default {
   mounted() {
     this.tabStyle(1)
     this.coinList()
+    this.getUserName()
     // this.table(0)
   },
   methods: {
+    getUserName() {
+      const that = this;
+      axios.get('/monitor/user-api/users?userId=' + this.userId).then(res => {
+            if (res.data.code === 1001) {
+              that.userName = res.data.data.name
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+            that.$message.error('请求失败');
+          });
+    },
     // tab转换
     tabStyle(index) {
       switch (index) {
