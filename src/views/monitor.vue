@@ -453,9 +453,16 @@ export default {
           state: 1,
         }
         let addrRulesAdd = []
+
         for (let i = 0; i < this.addrAdd; i++) {
+          let coins = []
+          try {
+            let coin = that.$children[0].coinSearch.filter(x => x.coinName === this.value[i])[0].contractAddr
+            coins.push(coin)
+          } catch (e) {
+          }
           let addrRule = {
-            coinKind: this.value[i],
+            coinKind: coins[i],
             address: this.addr.addInfo.address[i],
             addressMark: this.addr.addInfo.mark[i],
             monitorMinVal: this.addr.addInfo.miniValue[i],
@@ -530,6 +537,8 @@ export default {
 
         }
         let eventArray = this.eventArray[this.scopeRowId - 1]
+        eventArray.eventName = this.addr.event
+        eventArray.noticeWay = noticeWay
         delete eventArray.createTime
         delete eventArray.updateTime
 
@@ -609,7 +618,6 @@ export default {
         try {
           coinKind = that.$children[0].coinSearch.filter(x => x.coinName === this.value[0])[0].contractAddr
         } catch (e) {
-          coinKind = this.value[0]
         }
         let transRule = new this.TransRule(null, this.$children[0].userId, coinKind, noticeWay, this.trans.miniValue)
         axios.post('/monitor/user-api/trans-rules', JSON.stringify([transRule]), {
@@ -627,7 +635,6 @@ export default {
         try {
           coinKind = that.$children[0].coinSearch.filter(x => x.coinName === this.value[0])[0].contractAddr
         } catch (e) {
-          coinKind = this.value[0]
         }
         let transRule2 = new this.TransRule(this.currentUid, this.$children[0].userId, coinKind, noticeWay, this.trans.miniValue)
         axios.put('/monitor/user-api/trans-rules', JSON.stringify([transRule2]), {
