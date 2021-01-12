@@ -454,13 +454,21 @@ export default {
         }
         let addrRulesAdd = []
 
-        for (let i = 0; i < this.addrAdd; i++) {
-          let coins = []
-          try {
-            let coin = that.$children[0].coinSearch.filter(x => x.coinName === this.value[i])[0].contractAddr
-            coins.push(coin)
-          } catch (e) {
+        const coins = this.value.map(item => {
+          const coinInfo = that.$children[0].coinSearch.filter(x => x.coinName == item)
+          if (coinInfo.length != 0) {
+            return coinInfo[0].contractAddr
           }
+          return item
+        })
+
+        for (let i = 0; i < this.addrAdd; i++) {
+          // let coins = []
+          // try {
+          //   let coin = that.$children[0].coinSearch.filter(x => x.coinName === this.value[i])[0].contractAddr
+          //   coins.push(coin)
+          // } catch (e) {
+          // }
           let addrRule = {
             coinKind: coins[i],
             address: this.addr.addInfo.address[i],
